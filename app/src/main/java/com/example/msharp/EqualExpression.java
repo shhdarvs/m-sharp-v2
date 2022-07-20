@@ -1,8 +1,10 @@
 package com.example.msharp;
 
+import com.example.msharp.expression.Expression;
+
 import java.util.Map;
 /*Equals expression. Covers "=="} and "!=" operators.*/
-public class EqualExpression extends Expression{
+public class EqualExpression extends Expression {
 
     public Factor leftHandSide;
     public String operator;

@@ -5,9 +5,11 @@ package com.example.msharp;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.example.msharp.statements.AssignmentStatement;
-import com.example.msharp.statements.ConsoleOutStatement;
-import com.example.msharp.statements.IfStatement;
+import com.example.msharp.expression.Expression;
+import com.example.msharp.statement.AssignmentStatement;
+import com.example.msharp.statement.ConsoleOutStatement;
+import com.example.msharp.statement.IfStatement;
+import com.example.msharp.statement.WhileStatement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,7 +124,7 @@ public class Parser {
     }
 
     /*Function that takes a string and processes it into an expression.  */
-    public static Expression processExpression (String input,  Map<String, Integer> Numbers, Map<String, String> Strings, Map<String, String> Bools)
+    public static Expression processExpression (String input, Map<String, Integer> Numbers, Map<String, String> Strings, Map<String, String> Bools)
     {
 
         String[] expression = input.split(" ",3 );

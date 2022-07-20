@@ -14,8 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 
-import java.io.Console;
-import java.util.Scanner;
+import com.example.msharp.expression.Expression;
 
 public class ReadInExpression extends Expression
 {

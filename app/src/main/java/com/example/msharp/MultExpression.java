@@ -1,10 +1,12 @@
 package com.example.msharp;
 
+import com.example.msharp.expression.Expression;
+
 import java.util.Map;
 
 /* Multiplication expressions:
 Covers multiplication ("*"), division ("/") and exponents ("^"). */
-public class MultExpression extends Expression{
+public class MultExpression extends Expression {
     public Factor leftHandSide;
     public String operator;
     public Factor rightHandSide;

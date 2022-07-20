@@ -1,11 +1,11 @@
 package com.example.msharp;
 
-import com.google.android.material.navigation.NavigationView;
+import com.example.msharp.expression.Expression;
 
 import java.util.Map;
 
 /*Add expression: Represents the addition and subtraction of two integers. ie: 1 + 2, 7 - a (given a is an int).*/
-public class AddExpression extends Expression{
+public class AddExpression extends Expression {
     public Factor leftHandSide;
     public String operator;
     public Factor rightHandSide;

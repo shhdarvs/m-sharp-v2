@@ -1,9 +1,9 @@
-package com.example.msharp.statements;
+package com.example.msharp.statement;
 
 import android.widget.TextView;
 
-import com.example.msharp.Expression;
-import com.example.msharp.ExpressionHelper;
+import com.example.msharp.expression.Expression;
+import com.example.msharp.expression.ExpressionHelper;
 
 import java.util.Map;
 

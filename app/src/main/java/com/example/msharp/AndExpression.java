@@ -1,9 +1,11 @@
 package com.example.msharp;
 
+import com.example.msharp.expression.Expression;
+
 import java.util.Map;
 
 /* And expressions: Covers both AND ("&&") and OR ("||") operations between two elements. ie: true || false, a && b. */
-public class AndExpression extends  Expression
+public class AndExpression extends Expression
 {
     public Factor leftHandSide;
     public String operator;

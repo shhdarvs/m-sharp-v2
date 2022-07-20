@@ -1,13 +1,13 @@
 package com.example.msharp;
 
-import com.google.android.material.navigation.NavigationView;
+import com.example.msharp.expression.Expression;
 
 import java.util.Map;
 
 /* Relationship expressions:
 Covers cases where one element is compared to another using any of the following operators:
 "<", ">", "<=" or ">=" */
-public class RelationExpression extends Expression{
+public class RelationExpression extends Expression {
 
     public Factor leftHandSide;
     public String operator;

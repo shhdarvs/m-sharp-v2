@@ -1,12 +1,8 @@
-package com.example.msharp.statements;
+package com.example.msharp.statement;
 
-import android.util.Log;
-
-import com.example.msharp.Expression;
-import com.example.msharp.ExpressionHelper;
-import com.example.msharp.Functions;
+import com.example.msharp.expression.Expression;
+import com.example.msharp.expression.ExpressionHelper;
 import com.example.msharp.Logging;
-import com.example.msharp.Token;
 
 import java.util.Map;
 
@@ -86,7 +82,7 @@ public class AssignmentStatement extends Statement {
                 removeVariable();
                 stringMap.put(variable, expression.resultString());
                 break;
-                
+
             case ExpressionHelper.doubleLit:
                 removeVariable();
                 //TODO: place double result into map

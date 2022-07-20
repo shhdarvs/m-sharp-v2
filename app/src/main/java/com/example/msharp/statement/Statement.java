@@ -1,4 +1,4 @@
-package com.example.msharp.statements;
+package com.example.msharp.statement;
 
 import com.example.msharp.AST;
 

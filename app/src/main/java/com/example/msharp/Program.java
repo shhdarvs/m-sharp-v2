@@ -3,7 +3,7 @@ package com.example.msharp;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.example.msharp.statements.Statement;
+import com.example.msharp.statement.Statement;
 
 import java.util.ArrayList;
 
