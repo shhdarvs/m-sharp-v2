@@ -5,12 +5,13 @@ package com.example.msharp;
 import android.content.Context;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.example.msharp.statements.AssignmentStatement;
+import com.example.msharp.statements.ConsoleOutStatement;
+import com.example.msharp.statements.IfStatement;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 public class Parser {
     TextView console; //The view the interpreter outputs to.
@@ -203,7 +204,7 @@ public class Parser {
                     {
                         ReadInExpression newExpression = new ReadInExpression(context);
                         AssignmentStatement newAssignmentStatement = new AssignmentStatement(Tokens[1], newExpression,Numbers,Strings, Bools);
-                        program.Add(newAssignmentStatement);
+                        program.add(newAssignmentStatement);
                     }
 
                     /* Our new variable is a string. ie: let x = #how now brown cow */
@@ -211,7 +212,7 @@ public class Parser {
                     {
                         StringFactor newFactor = new StringFactor(varAndExpression[1]);
                         AssignmentStatement newAssignmentStatement = new AssignmentStatement(Tokens[1], newFactor, Numbers, Strings, Bools);
-                        program.Add(newAssignmentStatement);
+                        program.add(newAssignmentStatement);
                     }
 
                     /* Our new variable is an int. ie: let x = 77 */
@@ -219,14 +220,14 @@ public class Parser {
                     {
                         IntegerFactor newFactor = new IntegerFactor(Integer.parseInt(varAndExpression[1]));
                         AssignmentStatement newAssignmentStatement = new AssignmentStatement(Tokens[1], newFactor, Numbers, Strings, Bools);
-                        program.Add(newAssignmentStatement);
+                        program.add(newAssignmentStatement);
                     }
                     /* Our new variable is a boolean. ie: let x = true */
                     else if (isBool(varAndExpression[1]))
                     {
                         BoolFactor newBoolFactor = new BoolFactor(varAndExpression[1]);
                         AssignmentStatement newAssignmentStatement = new AssignmentStatement(Tokens[1], newBoolFactor, Numbers, Strings, Bools);
-                        program.Add(newAssignmentStatement);
+                        program.add(newAssignmentStatement);
                     }
 
                     /* Our new variable is copying an existing variable. ie: let x = y */
@@ -237,13 +238,13 @@ public class Parser {
                     {
                         Expression newExpression = processExpression(varAndExpression[1], Numbers, Strings, Bools);
                         AssignmentStatement newAssignmentStatement = new AssignmentStatement((Tokens[1]), newExpression, Numbers, Strings, Bools);
-                        program.Add(newAssignmentStatement);
+                        program.add(newAssignmentStatement);
                     }
                     else /* if(isExistingVariable(varAndExpression[1], Numbers, Strings, Bools)) */
                     {
                         VariableFactor newVariableFactor = new VariableFactor(varAndExpression[1], Numbers, Strings, Bools);
                         AssignmentStatement newAssignmentStatement_5 = new AssignmentStatement(Tokens[1], newVariableFactor, Numbers, Strings, Bools);
-                        program.Add(newAssignmentStatement_5);
+                        program.add(newAssignmentStatement_5);
                     }
                     break;
 
@@ -257,7 +258,7 @@ public class Parser {
                     {
                         StringFactor newStringFactor = new StringFactor(printAndExpression[1]);
                         ConsoleOutStatement newConsoleOutStatement_1 = new ConsoleOutStatement(newStringFactor, Numbers, Strings, Bools, console);
-                        program.Add(newConsoleOutStatement_1);
+                        program.add(newConsoleOutStatement_1);
                     }
 
                     /* Printing an int */
@@ -265,7 +266,7 @@ public class Parser {
                     {
                         IntegerFactor newIntegerFactor = new IntegerFactor(Integer.parseInt(printAndExpression[1]));
                         ConsoleOutStatement newConsoleOutStatement_2 = new ConsoleOutStatement(newIntegerFactor, Numbers, Strings, Bools, console);
-                        program.Add(newConsoleOutStatement_2);
+                        program.add(newConsoleOutStatement_2);
                     }
 
                     /* Printing a bool */
@@ -273,7 +274,7 @@ public class Parser {
                     {
                         BoolFactor newBoolFactor = new BoolFactor(printAndExpression[1]);
                         ConsoleOutStatement newConsoleOutStatement_2_1 = new ConsoleOutStatement(newBoolFactor, Numbers, Strings, Bools, console);
-                        program.Add(newConsoleOutStatement_2_1);
+                        program.add(newConsoleOutStatement_2_1);
                     }
 
                     /* Printing the evaluation of an expression. */
@@ -281,7 +282,7 @@ public class Parser {
                     {
                         Expression newExpression = processExpression(printAndExpression[1], Numbers, Strings, Bools);
                         ConsoleOutStatement newConsoleOutStatement_4 = new ConsoleOutStatement(newExpression, Numbers, Strings, Bools, console);
-                        program.Add(newConsoleOutStatement_4);
+                        program.add(newConsoleOutStatement_4);
                     }
 
                     /* Printing the value of an existing variable. */
@@ -289,7 +290,7 @@ public class Parser {
                     {
                         VariableFactor newVariableFactor = new VariableFactor(printAndExpression[1], Numbers, Strings, Bools);
                         ConsoleOutStatement newConsoleOutStatement_3 = new ConsoleOutStatement(newVariableFactor, Numbers, Strings, Bools, console);
-                        program.Add(newConsoleOutStatement_3);
+                        program.add(newConsoleOutStatement_3);
                     }
                     break;
 
@@ -399,7 +400,7 @@ public class Parser {
                     /*Create new ifStatement object.*/
                     IfStatement newIfStatement = new IfStatement(ifLhs, ifOp, ifRhs, ifTempProgram.statements , currentLine, Numbers, Strings, Bools, this);
                     /*Add the new ifStatement to our AST*/
-                    program.Add(newIfStatement);
+                    program.add(newIfStatement);
                     break;
 
                 /* While statement */
@@ -509,7 +510,7 @@ public class Parser {
                     /*Create new whileStatement object.*/
                     WhileStatement newWhileStatement = new WhileStatement(whileLhs, whileOp, whileRhs, whileTempProgram.statements, currentLine, Numbers, Strings, Bools, this);
                     /*Add the new whileStatement to our AST*/
-                    program.Add(newWhileStatement);
+                    program.add(newWhileStatement);
                     break;
 
                 case "":

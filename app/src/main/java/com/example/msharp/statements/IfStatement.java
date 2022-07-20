@@ -1,10 +1,18 @@
-package com.example.msharp;
+package com.example.msharp.statements;
+
+import com.example.msharp.Factor;
+import com.example.msharp.Functions;
+import com.example.msharp.Parser;
+import com.example.msharp.statements.Statement;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /* If statements */
+
+/**
+ * The IFStatement class
+ */
 public class IfStatement extends Statement
 {
     public Factor leftHandSide;

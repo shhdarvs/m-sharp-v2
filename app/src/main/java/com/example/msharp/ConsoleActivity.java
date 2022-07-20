@@ -113,7 +113,7 @@ public class ConsoleActivity extends AppCompatActivity {
 
 
 
-                    program.Run(textView);
+                    program.run(textView);
 
 
 

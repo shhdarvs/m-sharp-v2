@@ -1,10 +1,12 @@
 package com.example.msharp;
 
+import com.example.msharp.statements.Statement;
+
 import java.util.ArrayList;
 import java.util.Map;
 
 /* While statement */
-public class WhileStatement extends Statement{
+public class WhileStatement extends Statement {
 
     public Factor leftHandSide;
     public String operator;
