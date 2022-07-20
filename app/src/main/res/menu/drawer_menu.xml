@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:title="Statements">
+            <menu>
+
+
+                <item
+                    android:id="@+id/stmAss"
+                    android:title="let VAR = EXP" />
+
+                <item
+                    android:id="@+id/stmIf"
+                    android:title="if COND" />
+
+                <item
+                    android:id="@+id/stmIfEnd"
+                    android:title="ifEnd" />
+
+                <item
+                    android:id="@+id/stmWhile"
+                    android:title="while COND" />
+
+                <item
+                    android:id="@+id/stmWhileEnd"
+                    android:title="whileEnd" />
+
+                <item
+                    android:id="@+id/stmWrite"
+                    android:title="print EXP" />
+            </menu>
+
+        </item>
+
+     
+    </group>
+
+</menu>

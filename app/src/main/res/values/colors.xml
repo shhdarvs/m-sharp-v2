@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colourBlack">#000000</color>
+
+    <color name="palletWhite">#fbf5ef</color>
+    <color name="palletYellow">#f2d3ab</color>
+    <color name="palletPink">#c69fa5</color>
+    <color name="palletPurple">#162944</color>
+    <color name="palletBlue">#565c56</color>
+    <color name="palletDeepBlue">#0a151b</color>
+
+    <color name="keyboard_background_color">#34495e</color>
+    <color name="keyboard_divider">#2ce350</color>
+    <color name="keyboard_pressed">#95a5a6</color>
+</resources>
