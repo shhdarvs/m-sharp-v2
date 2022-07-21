@@ -1,5 +1,7 @@
-package com.example.msharp;
+package com.example.msharp.expression;
 
+import com.example.msharp.Factor;
+import com.example.msharp.Functions;
 import com.example.msharp.expression.Expression;
 
 import java.util.Map;
@@ -208,11 +210,16 @@ public class AndExpression extends Expression
 
     @Override
     public int type() {
-        return 1;
+        return ExpressionHelper.andExp;
     }
 
     @Override
     public int resultInt() {
+        return 0;
+    }
+
+    @Override
+    public double resultDouble() {
         return 0;
     }
 

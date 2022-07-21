@@ -5,6 +5,8 @@ package com.example.msharp;
 import android.content.Context;
 import android.widget.TextView;
 
+import com.example.msharp.expression.AddExpression;
+import com.example.msharp.expression.AndExpression;
 import com.example.msharp.expression.Expression;
 import com.example.msharp.statement.AssignmentStatement;
 import com.example.msharp.statement.ConsoleOutStatement;
