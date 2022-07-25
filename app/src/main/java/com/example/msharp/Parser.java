@@ -7,7 +7,14 @@ import android.widget.TextView;
 
 import com.example.msharp.expression.AddExpression;
 import com.example.msharp.expression.AndExpression;
+import com.example.msharp.expression.EqualExpression;
 import com.example.msharp.expression.Expression;
+import com.example.msharp.expression.RelationExpression;
+import com.example.msharp.factor.BoolFactor;
+import com.example.msharp.factor.Factor;
+import com.example.msharp.factor.IntegerFactor;
+import com.example.msharp.factor.StringFactor;
+import com.example.msharp.factor.VariableFactor;
 import com.example.msharp.statement.AssignmentStatement;
 import com.example.msharp.statement.ConsoleOutStatement;
 import com.example.msharp.statement.IfStatement;

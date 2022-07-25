@@ -1,6 +1,7 @@
 package com.example.msharp;
 
 import com.example.msharp.expression.Expression;
+import com.example.msharp.factor.Factor;
 
 import java.util.Map;
 

@@ -1,7 +1,14 @@
 package com.example.msharp.expression;
 
-import com.example.msharp.Factor;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import com.example.msharp.factor.Factor;
 import com.example.msharp.Logging;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class is a helper class. There are static integer values which each represent a type of expression. There is also a helper method which executes and determines the type of an expression
@@ -109,6 +116,77 @@ public class ExpressionHelper {
             default:
                 return false;
         }
+    }
+
+
+    /**
+     * This method evaluates whether or not a string represents a bool literal or a variable of type bool.
+     *
+     * @param input The string to be evaluated
+     * @return an integer value representing the boolean value of the string: 0 = false, and 1 = true
+     */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static int evaluateInputString(String TAG, String input, Map<String, String> boolMap) {
+        int val = -1;
+        boolean isNeg = false;
+        String raw = "";
+
+        if (input.charAt(0) == '!') {
+            isNeg = true;
+            input = input.substring(2);
+        }
+
+        //Is it a variable?
+        if (boolMap.containsKey(input)) {
+            if (Objects.equals(boolMap.get(input), "false"))
+                val = 0;
+            else
+                val = 1;
+
+        }
+
+        //else its a bool literal.
+        else if (isBool(input)) {
+            if (input.equals("false")) {
+                val = 0;
+            } else {
+                val = 1;
+            }
+        } else
+            Logging.error(TAG, new Exception("Variable does not exist "));
+
+        if (isNeg)
+            val ^= 1;
+
+        return val;
+    }
+
+    public static boolean isInteger(String input) {
+        try {
+            int temp = Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static boolean isDouble(String input) {
+        try {
+            double temp = Double.parseDouble(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * This method determines if a factor is a bool literal or a variable that has value of type bool
+     *
+     * @param input the string representation of the factor
+     * @return true if the input is a bool literal, false if it is a variable
+     */
+    private static boolean isBool(String input) {
+        return input.equals("true") || input.equals("false") || input.equals("!false") || input.equals("!true");
     }
 
 }

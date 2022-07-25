@@ -1,6 +1,7 @@
-package com.example.msharp;
+package com.example.msharp.expression;
 
-import com.example.msharp.expression.Expression;
+import com.example.msharp.factor.Factor;
+import com.example.msharp.Functions;
 
 import java.util.Map;
 
@@ -94,6 +95,11 @@ public class RelationExpression extends Expression {
 
     @Override
     public int resultInt() {
+        return 0;
+    }
+
+    @Override
+    public double resultDouble() {
         return 0;
     }
 

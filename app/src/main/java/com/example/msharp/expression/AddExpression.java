@@ -1,12 +1,8 @@
 package com.example.msharp.expression;
 
-import android.util.Log;
-
-import com.example.msharp.Factor;
+import com.example.msharp.factor.Factor;
 import com.example.msharp.Functions;
 import com.example.msharp.Logging;
-import com.example.msharp.expression.Expression;
-import com.example.msharp.expression.ExpressionHelper;
 
 import java.util.Map;
 

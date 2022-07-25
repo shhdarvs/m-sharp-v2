@@ -1,5 +1,7 @@
-package com.example.msharp;
+package com.example.msharp.factor;
 //import javax.xml.bind.annotation.XmlAttachmentRef;
+import com.example.msharp.factor.Factor;
+
 import java.util.Map;
 
 /*Represents a variable of various types. */
@@ -69,6 +71,11 @@ public class VariableFactor extends Factor {
     public int resultInt() {
 
         return Numbers.get(variableName);
+    }
+
+    @Override
+    public double resultDouble() {
+        return 0;
     }
 
     @Override

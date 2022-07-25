@@ -1,211 +1,121 @@
 package com.example.msharp.expression;
 
-import com.example.msharp.Factor;
-import com.example.msharp.Functions;
-import com.example.msharp.expression.Expression;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import com.example.msharp.factor.Factor;
+import com.example.msharp.Logging;
 
 import java.util.Map;
+import java.util.Objects;
 
-/* And expressions: Covers both AND ("&&") and OR ("||") operations between two elements. ie: true || false, a && b. */
-public class AndExpression extends Expression
-{
-    public Factor leftHandSide;
+
+/**
+ * This class represents a logical expression. This expression can contain either the AND (&&) or the OR (||) operation between elements. This class definition can also be used for unary expressions
+ */
+public class AndExpression extends Expression {
+    public static final String TAG = "AndExpression";
+
+    public Factor LHS;
     public String operator;
-    public Factor rightHandSide;
-    public Map<String,String> Bools;
+    public Factor RHS;
+    public Map<String, String> boolMap;
     public boolean result;
 
-    /*Constructor*/
-    public  AndExpression(Factor leftHandSide, String operator, Factor rightHandSide, Map<String,String> Bools)
-    {
-        this.leftHandSide = leftHandSide;
+    public AndExpression(Factor LHS, String operator, Factor RHS, Map<String, String> boolMap) {
+        this.LHS = LHS;
         this.operator = operator;
-        this.rightHandSide = rightHandSide;
-        this.Bools = Bools;
-    }
-    /*A method to determine if a factor is a bool literal. The alternative is it's a variable.*/
-    public static boolean isBool(String input)
-    {
-        if(input.equals("true") || input.equals("false") || input.equals("!false") || input.equals("!true"))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        this.RHS = RHS;
+        this.boolMap = boolMap;
     }
 
-    /*Get the values of the lhs and rhs and apply them based on the operator. */
+
+    /**
+     * This method determines if a factor is a bool literal or a variable that has value of type bool
+     *
+     * @param input the string representation of the factor
+     * @return true if the input is a bool literal, false if it is a variable
+     */
+    public static boolean isBool(String input) {
+        return input.equals("true") || input.equals("false") || input.equals("!false") || input.equals("!true");
+    }
+
+
+    /**
+     * This method applies the boolean operator to the LHS and RHS of the expression, and returns its result
+     */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
-    public void execute() throws Exception {
-        Functions fun = new Functions();
+    public void execute() {
+        //Integer representations of the LHS and RHS : 0 = false ; 1 = true
+        int lhs = -1;
+        int rhs = -1;
 
-        int lhs;
-        int rhs;
+        boolean negL = false;
+        boolean negR = false;
 
-            String[] split = leftHandSide.rawInput().split("!",2); //Checking if the factor is notted.
-            if(split[0].equals("")) //Factor is notted.
-            {
-                if(Bools.containsKey(split[1])) //Is it a variable?
-                {
-                    if(Bools.get(split[1]).equals("true"))
-                    {
-                        lhs = 0;
-                    }
+        String rawLHS = LHS.rawInput();
+        String rawRHS = RHS.rawInput();
 
-                    else
-                    {
-                        lhs = 1;
-                    }
-                }
-                else if(isBool(split[1]))   //else its a bool literal.
-                {
-                    if(split[1] == "true")
-                    {
-                        lhs = 0;
-                    }
+        //Evaluate the boolean value of each side of the expression
+        lhs = evaluateInputString(rawLHS);
+        rhs = evaluateInputString(rawRHS);
 
-                    else
-                    {
-                        lhs = 1;
-                    }
-                }
-                else //unknown variable
-                {
-                    Exception e = new Exception("Variable does not exist ");
-                    throw e;
-                }
-            }
-            else    //Factor is not notted.
-            {
-                if(Bools.containsKey(leftHandSide.rawInput())) //Is it a variable?
-                {
-                    if(Bools.get(leftHandSide.rawInput()).equals("true"))
-                    {
-                        lhs = 1;
-                    }
-
-                    else
-                    {
-                        lhs = 0;
-                    }
-                }
-                else if(isBool(leftHandSide.rawInput())) //else its a bool literal.
-                {
-                    if(leftHandSide.rawInput().equals("true"))
-                    {
-                        lhs = 1;
-                    }
-
-                    else
-                    {
-                        lhs = 0;
-                    }
-                }
-                else //unknown variable
-                {
-                    Exception e = new Exception("Variable does not exist ");
-                    throw e;
-                }
-            }
-
-            /*Same procedure as above, now for the right hand side factor. */
-            String[] split2 = rightHandSide.rawInput().split("!",2); //Check to see if its notted.
-            if(split2[0].equals("")) // notted
-            {
-                if(Bools.containsKey(split2[1])) //is it a variable?
-                {
-                    if(Bools.get(split2[1]).equals("true"))
-                    {
-                        rhs = 0;
-                    }
-
-                    else
-                    {
-                        rhs = 1;
-                    }
-                }
-                else if(isBool(split2[1])) //is it a bool literal?
-                {
-                    if(split2[1].equals("true"))
-                    {
-                        rhs = 0;
-                    }
-
-                    else
-                    {
-                        rhs = 1;
-                    }
-                }
-                else //unknown variable
-                {
-                    Exception e = new Exception("Variable does not exist ");
-                    throw e;
-                }
-            }
-            else    //!notted
-            {
-                if(Bools.containsKey(rightHandSide.rawInput())) //is it a variable?
-                {
-                    if(Bools.get(rightHandSide.rawInput()).equals("true"))
-                    {
-                        rhs = 1;
-                    }
-
-                    else
-                    {
-                        rhs = 0;
-                    }
-                }
-                else if(isBool(rightHandSide.rawInput())) //is it a bool lit?
-                {
-                    if(rightHandSide.rawInput().equals("true"))
-                    {
-                        rhs = 1;
-                    }
-
-                    else
-                    {
-                        rhs = 0;
-                    }
-                }
-                else //unknown variable
-                {
-                    Exception e = new Exception("Variable does not exist ");
-                    throw e;
-                }
-            }
-
-
-
-
-        /*Produce result based on what the operator is.*/
-        switch (operator)
-        {
+        //Switch on the type of operator
+        switch (operator) {
             case "&&":
-                if(lhs == 1 && rhs == 1)
-                {
-                    result = true;
-                }
-                else
-                {
-                    result = false;
-                }
+                result = lhs == 1 && rhs == 1;
                 break;
 
             case "||":
-                if(lhs == 1 || rhs == 1)
-                {
-                    result = true;
-                }
-                else
-                {
-                    result = false;
-                }
+                result = lhs == 1 || rhs == 1;
                 break;
 
         }
+    }
+
+
+    /**
+     * This method evaluates whether or not a string represents a bool literal or a variable of type bool.
+     *
+     * @param input The string to be evaluated
+     * @return an integer value representing the boolean value of the string: 0 = false, and 1 = true
+     */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private int evaluateInputString(String input) {
+        int val = -1;
+        boolean isNeg = false;
+        String raw = "";
+
+        if (input.charAt(0) == '!') {
+            isNeg = true;
+            input = input.substring(2);
+        }
+
+        //Is it a variable?
+        if (boolMap.containsKey(input)) {
+            if (Objects.equals(boolMap.get(input), "false"))
+                val = 0;
+            else
+                val = 1;
+
+        }
+
+        //else its a bool literal.
+        else if (isBool(input)) {
+            if (input.equals("false")) {
+                val = 0;
+            } else {
+                val = 1;
+            }
+        } else
+            Logging.error(TAG, new Exception("Variable does not exist "));
+
+        if (isNeg)
+            val ^= 1;
+
+        return val;
     }
 
     @Override
@@ -220,19 +130,15 @@ public class AndExpression extends Expression
 
     @Override
     public double resultDouble() {
-        return 0;
+        return 0.0;
     }
 
     @Override
     public String resultBool() {
-        if(result){
+        if (result)
             return "true";
-        }
         else
-        {
             return "false";
-        }
-
     }
 
     @Override

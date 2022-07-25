@@ -1,7 +1,7 @@
 package com.example.msharp.statement;
 
 import com.example.msharp.expression.ExpressionHelper;
-import com.example.msharp.Factor;
+import com.example.msharp.factor.Factor;
 import com.example.msharp.Logging;
 import com.example.msharp.Parser;
 

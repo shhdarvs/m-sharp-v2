@@ -1,4 +1,4 @@
-package com.example.msharp;
+package com.example.msharp.factor;
 
 import com.example.msharp.expression.Expression;
 
