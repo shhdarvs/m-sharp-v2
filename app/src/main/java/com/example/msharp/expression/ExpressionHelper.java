@@ -24,6 +24,8 @@ public class ExpressionHelper {
     public final static int stringLit = 7;
     public final static int varName = 8;
     public final static int doubleLit = 9;
+    public final static int unExp = 10;
+    public final static int binExp = 11;
 
     /**
      * This method executes and determines the type of an expression.

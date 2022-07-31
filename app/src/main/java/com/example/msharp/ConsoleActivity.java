@@ -70,50 +70,47 @@ public class ConsoleActivity extends AppCompatActivity {
                 int scopeIf = 0;
 
 
-                    /*Parse the program, costruct an AST. */
-                    for (int x = 0; x < loadedLines.size(); x++) {
-                        String line = loadedLines.get(x);
-                        String Tokens[] = line.split(" ");
+                /*Parse the program, costruct an AST. */
+                for (int x = 0; x < loadedLines.size(); x++) {
+                    String line = loadedLines.get(x);
+                    String Tokens[] = line.split(" ");
 
-                        if (!needToSkipIf && !needToSkipWhile) {
-                            try {
-                                parser.ParseTokens(Tokens, line, Numbers, Strings, Bools, program, x, loadedLines);
-                            } catch (Exception e) {
+                    if (!needToSkipIf && !needToSkipWhile) {
+                        try {
+                            parser.ParseTokens(Tokens, line, Numbers, Strings, Bools, program, x, loadedLines);
+                        } catch (Exception e) {
                             /*The one other error that cant be caught in the editor is if an if/while scope is opened but never closed.
                               They are caught here. */
-                                textView.setText(e.getMessage());
-                                break;
-                            }
-                        }
-                        if (Tokens[0].equals("ifEnd")) {
-                            scopeIf--;
-                            if (scopeIf == 0) {
-                                needToSkipIf = false;
-                            }
-
-                        }
-                        if (Tokens[0].equals("whileEnd")) {
-                            scopeWhile--;
-                            if (scopeWhile == 0) {
-                                needToSkipWhile = false;
-                            }
-
-                        }
-                        if (Tokens[0].equals("if")) {
-                            scopeIf++;
-                            needToSkipIf = true;
-                        }
-                        if (Tokens[0].equals("while")) {
-                            scopeWhile++;
-                            needToSkipWhile = true;
+                            textView.setText(e.getMessage());
+                            break;
                         }
                     }
+                    if (Tokens[0].equals("ifEnd")) {
+                        scopeIf--;
+                        if (scopeIf == 0) {
+                            needToSkipIf = false;
+                        }
+
+                    }
+                    if (Tokens[0].equals("whileEnd")) {
+                        scopeWhile--;
+                        if (scopeWhile == 0) {
+                            needToSkipWhile = false;
+                        }
+
+                    }
+                    if (Tokens[0].equals("if")) {
+                        scopeIf++;
+                        needToSkipIf = true;
+                    }
+                    if (Tokens[0].equals("while")) {
+                        scopeWhile++;
+                        needToSkipWhile = true;
+                    }
+                }
 
 
-
-
-
-                    program.run(textView);
+                program.run(textView);
 
 
 
@@ -156,8 +153,7 @@ public class ConsoleActivity extends AppCompatActivity {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                    switch(item.getItemId())
-                    {
+                    switch (item.getItemId()) {
 
                         case R.id.code:
 

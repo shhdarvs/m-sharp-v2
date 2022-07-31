@@ -104,6 +104,11 @@ public class MultExpression extends Expression {
     }
 
     @Override
+    public double resultDouble() {
+        return 0;
+    }
+
+    @Override
     public String resultBool() {
         return null;
     }
