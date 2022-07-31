@@ -4,15 +4,28 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.example.msharp.EditorActivity;
+import com.example.msharp22.decoration.Decorate;
+import com.example.msharp22.decoration.DecoratedExpression;
+import com.example.msharp22.syntax.AST;
+import com.example.msharp22.syntax.ConsoleColours;
+import com.example.msharp22.syntax.SyntaxTree;
+import com.example.msharp22.syntax.Token;
 
-import java.io.Console;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Program {
 
+    //Commands for user
+    // 1. #showTree: toggles AST to show ON/OFF
+    // 2. #clear: clears console
+
     @RequiresApi(api = Build.VERSION_CODES.R)
     public static void main(String[] args) {
+        boolean showTree = false;
+
         Scanner sc = new Scanner(System.in);
 
         while (true) {
@@ -23,18 +36,40 @@ public class Program {
             if ((line == null) && line.isEmpty() && line.trim().isEmpty())
                 return;
 
+            if (line.equals("#showTree")) {
+                showTree = !showTree;
+                String output = showTree ? "Now showing AST..." : "Not showing showing AST...";
+                System.out.println(output);
+                System.out.println();
+                continue;
+            } else if (line.equals("#clear")) {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+                continue;
+            }
+
+            //Parse the source program and decorate the tree
             SyntaxTree syntaxTree = SyntaxTree.parse(line);
+            Decorate decorate = new Decorate();
+            DecoratedExpression decoratedExpression = decorate.decorateExpression(syntaxTree.root);
 
-            prettyPrint(syntaxTree.root, "", true);
-            System.out.println();
+            List<String> diagnostics = Stream
+                    .concat(syntaxTree.diagnostics.stream(), decorate.diagnostics.stream())
+                    .collect(Collectors.toList());
 
-            if (syntaxTree.diagnostics.size() > 0) {
+            if (showTree) {
+                prettyPrint(syntaxTree.root, "", true);
+                System.out.println();
+            }
+
+
+            if (diagnostics.size() > 0) {
                 System.out.print(ConsoleColours.TEXT_RED);
-                for (String d : syntaxTree.diagnostics)
+                for (String d : diagnostics)
                     System.out.println(d);
                 System.out.print(ConsoleColours.TEXT_RESET);
             } else {
-                Evaluator eval = new Evaluator(syntaxTree.root);
+                Evaluator eval = new Evaluator(decoratedExpression);
                 System.out.println("Result: " + eval.evaluate());
             }
 

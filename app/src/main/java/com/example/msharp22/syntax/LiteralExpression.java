@@ -1,4 +1,4 @@
-package com.example.msharp22;
+package com.example.msharp22.syntax;
 
 import java.util.Collections;
 import java.util.List;
@@ -6,9 +6,11 @@ import java.util.List;
 public class LiteralExpression extends Expression {
 
     public Token literal;
+    public Object value;
 
-    public LiteralExpression(Token literal) {
+    public LiteralExpression(Token literal, Object value) {
         this.literal = literal;
+        this.value = value;
     }
 
     @Override

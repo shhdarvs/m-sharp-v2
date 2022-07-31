@@ -1,4 +1,4 @@
-package com.example.msharp22;
+package com.example.msharp22.syntax;
 
 import android.os.Build;
 
@@ -73,6 +73,11 @@ public class Parser {
         return current;
     }
 
+    /**
+     * This method consumes the current token while also moving onto the next token
+     *
+     * @return the current Token being consumed
+     */
     private Token next() {
         Token current = current();
         pos++;
@@ -97,73 +102,70 @@ public class Parser {
      * @return an object of type SyntaxTree which represents the parsed expression
      */
     public SyntaxTree parse() {
-        Expression exp = parseExpression();
+        Expression exp = parseExpression(0); // 0 is default for parent precedence
         Token EOFToken = match(TokenKind.EOFToken);
         return new SyntaxTree(exp, EOFToken, diagnostics);
     }
 
-    private Expression parseExpression() {
-        return parseTerm();
-    }
 
-    /**
-     * This method is responsible for parsing terms. It deals with parsing terms separated by the + or - operator
-     *
-     * @return an object of type BinaryExpression which represents the parsed term
-     */
-    private Expression parseTerm() {
-        Expression left = parseFactor();
+    private Expression parseExpression(int parentPrecedence) {
+        Expression left;
 
-        while (current().kind == TokenKind.PlusToken ||
-                current().kind == TokenKind.MinusToken) {
-            Token opToken = next();
-            Expression right = parseFactor();
-            left = new BinaryExpression(left, opToken, right);
+        int unaryPrecedence = SyntaxHelper.getUnaryOperatorPrecedence(current().kind);
+
+        if (unaryPrecedence != 0 && unaryPrecedence >= parentPrecedence) {
+            Token operator = next();
+            Expression operand = parseExpression(unaryPrecedence);
+            left = new UnaryExpression(operator, operand);
+        } else
+            left = parsePrimaryExpression();
+
+        while (true) {
+            int binaryPrecedence = SyntaxHelper.getBinaryOperatorPrecedence(current().kind);
+
+            if (binaryPrecedence == 0 || binaryPrecedence <= parentPrecedence)
+                break;
+
+            Token operator = next();
+            Expression right = parseExpression(binaryPrecedence);
+            left = new BinaryExpression(left, operator, right);
         }
 
         return left;
     }
 
-    /**
-     * This method is responsible for parsing factors. It deals with parsing literals separated by the * or / operator
-     *
-     * @return an object of type BinaryExpression which represents the parsed factor
-     */
-    private Expression parseFactor() {
-        Expression left = parsePrimaryExpression();
-
-        while (current().kind == TokenKind.MultToken ||
-                current().kind == TokenKind.DivToken) {
-            Token opToken = next();
-            Expression right = parsePrimaryExpression();
-            left = new BinaryExpression(left, opToken, right);
-        }
-
-        return left;
-    }
 
     /**
-     * This method parses a primary expression. A primary expression can either be an integer literal or double literal.
+     * This method parses a primary expression. A primary expression can either be an integer literal, double literal or an open parenthesis.
      *
      * @return an object of type NumberExpression which represents the parsed literal
      */
     private Expression parsePrimaryExpression() {
-        switch (current().kind) {
+        switch (current.kind) {
             case OpenParenthesis:
                 Token left = next();
-                Expression e = parseExpression();
+                Expression e = parseExpression(0);
                 Token right = match(TokenKind.ClosedParenthesis);
                 return new ParenthesizedExpression(left, e, right);
+
             case IntegerToken:
                 Token numToken = match(TokenKind.IntegerToken);
-                return new LiteralExpression(numToken);
+                return new LiteralExpression(numToken, numToken.value);
+
             case DoubleToken:
                 numToken = match(TokenKind.DoubleToken);
-                return new LiteralExpression(numToken);
+                return new LiteralExpression(numToken, numToken.value);
+
+            case TrueKeyword:
+            case FalseKeyword:
+                Token keyword = next();
+                boolean value = current.kind == TokenKind.TrueKeyword;
+                return new LiteralExpression(current, value);
         }
 
-        return new LiteralExpression(new Token(TokenKind.ERROR, current.pos, null, null));
+        return new LiteralExpression(new Token(TokenKind.ERROR, current.pos, null, null), null);
 
     }
 
 }
+

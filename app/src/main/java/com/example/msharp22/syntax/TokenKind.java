@@ -1,4 +1,4 @@
-package com.example.msharp22;
+package com.example.msharp22.syntax;
 
 public enum TokenKind {
 
@@ -16,9 +16,15 @@ public enum TokenKind {
     DivToken,
     OpenParenthesis,
     ClosedParenthesis,
+    IdentifierToken,
 
-    //Expressions
-    BinaryExpression,
+    //Keywords,
+    TrueKeyword,
+    FalseKeyword,
+
+    //Expressions,
     Literal,
+    BinaryExpression,
+    UnaryExpression,
     ParenthesizedExpression
 }

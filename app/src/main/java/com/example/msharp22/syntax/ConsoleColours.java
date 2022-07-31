@@ -1,4 +1,4 @@
-package com.example.msharp22;
+package com.example.msharp22.syntax;
 
 public class ConsoleColours {
     public static final String TEXT_RESET = "\u001B[0m";

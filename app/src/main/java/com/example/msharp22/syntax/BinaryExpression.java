@@ -1,4 +1,4 @@
-package com.example.msharp22;
+package com.example.msharp22.syntax;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,7 +7,7 @@ public class BinaryExpression extends Expression {
     public static final String TAG = "BinaryExpression";
 
     public Expression left;
-    Token operator;
+    public Token operator;
     public Expression right;
 
     public BinaryExpression(Expression left, Token operator, Expression right) {

@@ -1,4 +1,4 @@
-package com.example.msharp22;
+package com.example.msharp22.syntax;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,21 +69,36 @@ public class Lexer {
 
             int length = pos - start;
             String text = this.text.substring(start, start + length);
-            return new Token(TokenKind.WhitespaceToken, start, text, text);
+            return new Token(TokenKind.WhitespaceToken, start, text, null);
         }
 
-        if (current == '+')
-            return new Token(TokenKind.PlusToken, next(), "+", null);
-        else if (current == '-')
-            return new Token(TokenKind.MinusToken, next(), "-", null);
-        else if (current == '*')
-            return new Token(TokenKind.MultToken, next(), "*", null);
-        else if (current == '/')
-            return new Token(TokenKind.DivToken, next(), "/", null);
-        else if (current == '(')
-            return new Token(TokenKind.OpenParenthesis, next(), "(", null);
-        else if (current == ')')
-            return new Token(TokenKind.ClosedParenthesis, next(), ")", null);
+        if (Character.isLetter(current)) {
+            int start = pos;
+
+            while (Character.isLetter(current))
+                next();
+
+            int length = pos - start;
+            String text = this.text.substring(start, start + length);
+            TokenKind kind = SyntaxHelper.getKeyword(text);
+
+            return new Token(kind, start, text, null);
+        }
+
+        switch (current) {
+            case '+':
+                return new Token(TokenKind.PlusToken, next(), "+", null);
+            case '-':
+                return new Token(TokenKind.MinusToken, next(), "-", null);
+            case '*':
+                return new Token(TokenKind.MultToken, next(), "*", null);
+            case '/':
+                return new Token(TokenKind.DivToken, next(), "/", null);
+            case '(':
+                return new Token(TokenKind.OpenParenthesis, next(), "(", null);
+            case ')':
+                return new Token(TokenKind.ClosedParenthesis, next(), ")", null);
+        }
 
         diagnostics.add(String.format("ERROR: incorrect character input: %s", current));
         return new Token(TokenKind.ERROR, next(), this.text.substring(this.pos - 1, (this.pos - 1) + 1), null);
