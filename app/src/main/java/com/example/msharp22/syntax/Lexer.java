@@ -41,6 +41,23 @@ public class Lexer {
         return pos;
     }
 
+    private char peek(int offset) {
+        int index = pos + offset;
+
+        if (index < length)
+            return text.charAt(index);
+        else
+            return '\0';
+    }
+
+    private char current() {
+        return peek(0);
+    }
+
+    private char lookahead() {
+        return peek(1);
+    }
+
     /**
      * This method returns an iterable over the array list named diagnostics
      *
@@ -54,6 +71,8 @@ public class Lexer {
      * This method advances the current token to be the next token if available
      */
     public Token nextToken() {
+        current = current();
+
         if (pos >= length)
             return new Token(TokenKind.EOFToken, pos, "\0", null);
 
@@ -98,6 +117,17 @@ public class Lexer {
                 return new Token(TokenKind.OpenParenthesis, next(), "(", null);
             case ')':
                 return new Token(TokenKind.ClosedParenthesis, next(), ")", null);
+            case '!':
+                return new Token(TokenKind.NotToken, next(), "!", null);
+            case '&':
+                if (lookahead() == '&')
+                    return new Token(TokenKind.AndToken, pos += 2, "&&", null);
+                break;
+            case '|':
+                if (lookahead() == '|')
+                    return new Token(TokenKind.OrToken, pos += 2, "||", null);
+                break;
+
         }
 
         diagnostics.add(String.format("ERROR: incorrect character input: %s", current));

@@ -97,18 +97,24 @@ public class Decorate {
      * @return an object of type {@link DecoratedUnaryOperator} which represents the decorated unary operator
      */
     private DecoratedUnaryOperator decorateUnaryOperator(TokenKind kind, Type operandType) {
-        if (operandType != Double.class && operandType != Integer.class)
-            return null;
-
-        switch (kind) {
-            case PlusToken:
-                return DecoratedUnaryOperator.Identity;
-            case MinusToken:
-                return DecoratedUnaryOperator.Negation;
-            default:
-                Logging.error(TAG, new Exception("Unexpected unary operator " + kind));
-                return null;
+        if (operandType == Double.class || operandType == Integer.class) {
+            switch (kind) {
+                case PlusToken:
+                    return DecoratedUnaryOperator.Identity;
+                case MinusToken:
+                    return DecoratedUnaryOperator.Negation;
+                default:
+                    Logging.error(TAG, new Exception("Unexpected unary operator " + kind));
+                    return null;
+            }
         }
+        if (operandType == Boolean.class) {
+            if (kind == TokenKind.NotToken) {
+                return DecoratedUnaryOperator.LogicalNegation;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -120,22 +126,34 @@ public class Decorate {
      * @return an object of type {@link DecoratedBinaryOperator} which represents the decorated binary operator
      */
     private DecoratedBinaryOperator decorateBinaryOperator(TokenKind kind, Type leftType, Type rightType) {
-        if ((leftType != Double.class && leftType != Integer.class) || (rightType != Double.class && rightType != Integer.class))
-            return null;
-        switch (kind) {
-            case PlusToken:
-                return DecoratedBinaryOperator.Add;
-            case MinusToken:
-                return DecoratedBinaryOperator.Sub;
-            case MultToken:
-                return DecoratedBinaryOperator.Mult;
-            case DivToken:
-                return DecoratedBinaryOperator.Div;
-            default:
-                Logging.error(TAG, new Exception("Unexpected binary operator " + kind));
-                return null;
+        if ((leftType == Double.class || leftType == Integer.class) && (rightType == Double.class || rightType == Integer.class)) {
+            switch (kind) {
+                case PlusToken:
+                    return DecoratedBinaryOperator.Add;
+                case MinusToken:
+                    return DecoratedBinaryOperator.Sub;
+                case MultToken:
+                    return DecoratedBinaryOperator.Mult;
+                case DivToken:
+                    return DecoratedBinaryOperator.Div;
+                default:
+                    Logging.error(TAG, new Exception("Unexpected binary operator " + kind));
+                    return null;
+            }
         }
+        if (leftType == Boolean.class && rightType == Boolean.class) {
+            switch (kind) {
+                case AndToken:
+                    return DecoratedBinaryOperator.LogicalAnd;
+                case OrToken:
+                    return DecoratedBinaryOperator.LogicalOr;
+            }
+
+
+        }
+        return null;
     }
+
 }
 
 

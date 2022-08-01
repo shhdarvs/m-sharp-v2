@@ -6,6 +6,8 @@ import com.example.msharp22.decoration.DecoratedExpression;
 import com.example.msharp22.decoration.DecoratedLiteralExpression;
 import com.example.msharp22.decoration.DecoratedUnaryExpression;
 
+import static com.example.msharp22.decoration.DecoratedBinaryOperator.Sub;
+
 
 /**
  * This class will evaluate the result of an expression
@@ -45,21 +47,22 @@ public class Evaluator {
         //Unary Expression: -4
         if (node instanceof DecoratedUnaryExpression) {
             DecoratedUnaryExpression due = (DecoratedUnaryExpression) node;
-            double operandResult = 0;
+            Object operandResult = null;
+            double doubleOperandResult;
 
-            if (node.type == Integer.class) {
-                if (due.operand instanceof DecoratedUnaryExpression)
-                    operandResult = (double) evaluateExpression(due.operand);
-                else
-                    operandResult = (int) evaluateExpression(due.operand);
-            } else
-                operandResult = (double) evaluateExpression(due.operand);
+            operandResult = evaluateExpression(due.operand);
 
             switch (((DecoratedUnaryExpression) node).opKind) {
                 case Identity:
                     return operandResult;
                 case Negation:
-                    return -operandResult;
+                    if (operandResult.getClass() == Integer.class) {
+                        doubleOperandResult = (int) operandResult;
+                        return -doubleOperandResult;
+                    }
+                    return -(double) operandResult;
+                case LogicalNegation:
+                    return !(boolean) operandResult;
                 default:
                     Logging.error(TAG, new Exception("Unexpected unary operator: " + ((DecoratedUnaryExpression) node).opKind));
                     break;
@@ -70,20 +73,52 @@ public class Evaluator {
         //Binary Expressions: 2+4
         if (node instanceof DecoratedBinaryExpression) {
             DecoratedBinaryExpression b = (DecoratedBinaryExpression) node;
-            double left = (double) evaluateExpression(b.left);
-            double right = (double) evaluateExpression(b.right);
+            Object left = evaluateExpression(b.left);
+            Object right = evaluateExpression(b.right);
 
-            int round = 10000;
+            int round = 10000; //rounding off factor
 
             switch (b.opKind) {
                 case Add:
-                    return (double) Math.round((left + right) * round) / round;
+                    if (left.getClass() == Integer.class && right.getClass() == Integer.class)
+                        return (double) Math.round(((int) left + (int) right) * round) / round;
+                    else if (left.getClass() == Integer.class)
+                        return (double) Math.round(((int) left + (double) right) * round) / round;
+                    else if (right.getClass() == Integer.class)
+                        return (double) Math.round(((double) left + (int) right) * round) / round;
+                    else
+                        return (double) Math.round(((double) left + (double) right) * round) / round;
                 case Sub:
-                    return (double) Math.round((left - right) * round) / round;
+                    if (left.getClass() == Integer.class && right.getClass() == Integer.class)
+                        return (double) Math.round(((int) left - (int) right) * round) / round;
+                    else if (left.getClass() == Integer.class)
+                        return (double) Math.round(((int) left - (double) right) * round) / round;
+                    else if (right.getClass() == Integer.class)
+                        return (double) Math.round(((double) left - (int) right) * round) / round;
+                    else
+                        return (double) Math.round(((double) left - (double) right) * round) / round;
                 case Mult:
-                    return (double) Math.round((left * right) * round) / round;
+                    if (left.getClass() == Integer.class && right.getClass() == Integer.class)
+                        return (double) Math.round(((int) left * (int) right) * round) / round;
+                    else if (left.getClass() == Integer.class)
+                        return (double) Math.round(((int) left * (double) right) * round) / round;
+                    else if (right.getClass() == Integer.class)
+                        return (double) Math.round(((double) left * (int) right) * round) / round;
+                    else
+                        return (double) Math.round(((double) left * (double) right) * round) / round;
                 case Div:
-                    return (double) Math.round((left / right) * round) / round;
+                    if (left.getClass() == Integer.class && right.getClass() == Integer.class)
+                        return (double) Math.round(((int) left / (int) right) * round) / round;
+                    else if (left.getClass() == Integer.class)
+                        return (double) Math.round(((int) left / (double) right) * round) / round;
+                    else if (right.getClass() == Integer.class)
+                        return (double) Math.round(((double) left / (int) right) * round) / round;
+                    else
+                        return (double) Math.round(((double) left / (double) right) * round) / round;
+                case LogicalAnd:
+                    return (boolean) left && (boolean) right;
+                case LogicalOr:
+                    return (boolean) left || (boolean) right;
                 default:
                     Logging.error(TAG, new Exception("Unexpected binary operator: " + b.opKind));
 

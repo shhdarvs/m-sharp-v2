@@ -4,6 +4,7 @@ public class SyntaxHelper {
 
     /**
      * This method returns the precedence of an operator token for a unary expression. Higher precedence is given to + and - operators for unary expressions
+     *
      * @param kind the kind of operator token
      * @return an integer value representing the precedence
      */
@@ -11,7 +12,8 @@ public class SyntaxHelper {
         switch (kind) {
             case PlusToken:
             case MinusToken:
-                return 3;
+            case NotToken:
+                return 5;
 
             // If the operator is not a binary operator, return precedence of 0
             default:
@@ -21,6 +23,7 @@ public class SyntaxHelper {
 
     /**
      * This method returns the precedence of an operator token for a binary expression. Higher precedence is given to * and / operators for binary expressions.
+     *
      * @param kind the kind of operator token
      * @return an integer value representing the precedence
      */
@@ -29,10 +32,16 @@ public class SyntaxHelper {
             // Higher precedence is given to the * and / operators
             case MultToken:
             case DivToken:
-                return 2;
+                return 4;
 
             case PlusToken:
             case MinusToken:
+                return 3;
+
+            case AndToken:
+                return 2;
+
+            case OrToken:
                 return 1;
 
             // If the operator is not a binary operator, return precedence of 0

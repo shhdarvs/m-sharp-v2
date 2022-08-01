@@ -4,5 +4,7 @@ public enum DecoratedBinaryOperator {
     Add,
     Sub,
     Mult,
-    Div
+    Div,
+    LogicalAnd,
+    LogicalOr
 }

@@ -159,7 +159,7 @@ public class Parser {
             case TrueKeyword:
             case FalseKeyword:
                 Token keyword = next();
-                boolean value = current.kind == TokenKind.TrueKeyword;
+                boolean value = keyword.kind == TokenKind.TrueKeyword;
                 return new LiteralExpression(current, value);
         }
 
