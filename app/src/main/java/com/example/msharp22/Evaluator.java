@@ -6,8 +6,6 @@ import com.example.msharp22.decoration.DecoratedExpression;
 import com.example.msharp22.decoration.DecoratedLiteralExpression;
 import com.example.msharp22.decoration.DecoratedUnaryExpression;
 
-import static com.example.msharp22.decoration.DecoratedBinaryOperator.Sub;
-
 
 /**
  * This class will evaluate the result of an expression
@@ -52,7 +50,7 @@ public class Evaluator {
 
             operandResult = evaluateExpression(due.operand);
 
-            switch (((DecoratedUnaryExpression) node).opKind) {
+            switch (((DecoratedUnaryExpression) node).op.kind) {
                 case Identity:
                     return operandResult;
                 case Negation:
@@ -64,7 +62,7 @@ public class Evaluator {
                 case LogicalNegation:
                     return !(boolean) operandResult;
                 default:
-                    Logging.error(TAG, new Exception("Unexpected unary operator: " + ((DecoratedUnaryExpression) node).opKind));
+                    Logging.error(TAG, new Exception("Unexpected unary operator: " + ((DecoratedUnaryExpression) node).op));
                     break;
             }
 
@@ -78,7 +76,7 @@ public class Evaluator {
 
             int round = 10000; //rounding off factor
 
-            switch (b.opKind) {
+            switch (b.op.kind) {
                 case Add:
                     if (left.getClass() == Integer.class && right.getClass() == Integer.class)
                         return (double) Math.round(((int) left + (int) right) * round) / round;
@@ -119,8 +117,12 @@ public class Evaluator {
                     return (boolean) left && (boolean) right;
                 case LogicalOr:
                     return (boolean) left || (boolean) right;
+                case Equals:
+                    return left.equals(right);
+                case NotEquals:
+                    return !left.equals(right);
                 default:
-                    Logging.error(TAG, new Exception("Unexpected binary operator: " + b.opKind));
+                    Logging.error(TAG, new Exception("Unexpected binary operator: " + b.op));
 
             }
         }

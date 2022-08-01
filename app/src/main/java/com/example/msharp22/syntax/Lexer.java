@@ -118,6 +118,8 @@ public class Lexer {
             case ')':
                 return new Token(TokenKind.ClosedParenthesis, next(), ")", null);
             case '!':
+                if (lookahead() == '=')
+                    return new Token(TokenKind.NotEqualsToken, pos += 2, "==", null);
                 return new Token(TokenKind.NotToken, next(), "!", null);
             case '&':
                 if (lookahead() == '&')
@@ -126,6 +128,10 @@ public class Lexer {
             case '|':
                 if (lookahead() == '|')
                     return new Token(TokenKind.OrToken, pos += 2, "||", null);
+                break;
+            case '=':
+                if (lookahead() == '=')
+                    return new Token(TokenKind.EqualsToken, pos += 2, "==", null);
                 break;
 
         }

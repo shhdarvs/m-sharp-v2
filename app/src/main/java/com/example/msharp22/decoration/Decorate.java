@@ -1,5 +1,9 @@
 package com.example.msharp22.decoration;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.example.msharp.Logging;
 import com.example.msharp22.syntax.BinaryExpression;
 import com.example.msharp22.syntax.Expression;
@@ -22,14 +26,15 @@ public class Decorate {
      * @param expression the expression to be decorated
      * @return an object of type DecoratedExpression which represents the decorated expression
      */
+    @RequiresApi(api = Build.VERSION_CODES.P)
     public DecoratedExpression decorateExpression(Expression expression) {
         switch (expression.kind()) {
             case Literal:
-                return DecorateLiteralExpression((LiteralExpression) expression);
+                return decorateLiteralExpression((LiteralExpression) expression);
             case UnaryExpression:
-                return DecorateUnaryExpression((UnaryExpression) expression);
+                return decorateUnaryExpression((UnaryExpression) expression);
             case BinaryExpression:
-                return DecorateBinaryExpression((BinaryExpression) expression);
+                return decorateBinaryExpression((BinaryExpression) expression);
             default:
                 Logging.error(TAG, new Exception("Unexpected syntax " + expression.kind()));
                 return null;
@@ -43,7 +48,7 @@ public class Decorate {
      * @param expression the LiteralExpression to be decorated
      * @return an object of type {@link DecoratedLiteralExpression} which is the decorated literal expression
      */
-    private DecoratedExpression DecorateLiteralExpression(LiteralExpression expression) {
+    private DecoratedExpression decorateLiteralExpression(LiteralExpression expression) {
         Object value = expression.value == null ? 0 : expression.value;
 
         return new DecoratedLiteralExpression(value);
@@ -51,16 +56,16 @@ public class Decorate {
     }
 
     /**
-     * This method is responsible for decorating a unary expression. It calls {@link Decorate#decorateExpression(Expression)} on the {@link UnaryExpression#operand} field of the UnaryExpression object. It also makes a call to {@link Decorate#decorateUnaryOperator} on the {@link UnaryExpression#operator} field of the passed in UnaryExpression object
+     * This method is responsible for decorating a unary expression. It calls {@link Decorate#decorateExpression(Expression)} on the {@link UnaryExpression#operand} field of the UnaryExpression object. It also makes a call to -- on the {@link UnaryExpression#operator} field of the passed in UnaryExpression object
      *
      * @param expression the UnaryExpression to be decorated
      * @return an object of type {@link DecoratedUnaryExpression} which is the decorated unary expression
      * @see Decorate#decorateExpression(Expression)
-     * @see Decorate#decorateUnaryOperator(TokenKind, Type)
      */
-    private DecoratedExpression DecorateUnaryExpression(UnaryExpression expression) {
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    private DecoratedExpression decorateUnaryExpression(UnaryExpression expression) {
         DecoratedExpression decoratedOperand = decorateExpression(expression.operand);
-        DecoratedUnaryOperator decoratedOperator = decorateUnaryOperator(expression.operator.kind, decoratedOperand.type);
+        DecoratedUnaryOperator decoratedOperator = DecoratedUnaryOperator.decorate(expression.operator.kind, decoratedOperand.type.get(0));
 
         if (decoratedOperator == null) {
             diagnostics.add(String.format("Unary operator %s is not defined for type %s", expression.operator.text, decoratedOperand.type));
@@ -70,17 +75,17 @@ public class Decorate {
     }
 
     /**
-     * This method is responsible for decorating a binary expression. It calls {@link Decorate#decorateExpression(Expression)} on the {@link BinaryExpression#left} and {@link BinaryExpression#right} fields of the BinaryExpression object. It also makes a call to {@link Decorate#decorateBinaryOperator(TokenKind, Type, Type)} on the {@link BinaryExpression#operator} field of the passed in BinaryExpression object
+     * This method is responsible for decorating a binary expression. It calls {@link Decorate#decorateExpression(Expression)} on the {@link BinaryExpression#left} and {@link BinaryExpression#right} fields of the BinaryExpression object. It also makes a call to -- on the {@link BinaryExpression#operator} field of the passed in BinaryExpression object
      *
      * @param expression the BinaryExpression to be decorated
      * @return an object of type {@link DecoratedBinaryExpression} which is the decorated binary expression
      * @see Decorate#decorateExpression(Expression)
-     * @see Decorate#decorateBinaryOperator(TokenKind, Type, Type)
      */
-    private DecoratedExpression DecorateBinaryExpression(BinaryExpression expression) {
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    private DecoratedExpression decorateBinaryExpression(BinaryExpression expression) {
         DecoratedExpression decoratedLeft = decorateExpression(expression.left);
         DecoratedExpression decoratedRight = decorateExpression(expression.right);
-        DecoratedBinaryOperator decoratedOperator = decorateBinaryOperator(expression.operator.kind, decoratedLeft.type, decoratedRight.type);
+        DecoratedBinaryOperator decoratedOperator = DecoratedBinaryOperator.decorate(expression.operator.kind, decoratedLeft.type.get(0), decoratedRight.type.get(0));
 
         if (decoratedOperator == null) {
             diagnostics.add(String.format("Binary operator %s is not defined for types %s and %s", expression.operator.text, decoratedLeft.type, decoratedRight.type));
@@ -89,70 +94,6 @@ public class Decorate {
         return new DecoratedBinaryExpression(decoratedLeft, decoratedOperator, decoratedRight);
     }
 
-    /**
-     * This method decorates a unary operator. There are only two tokens to consider when decorating a unary expression, that is, the PlusToken and MinusToken
-     *
-     * @param kind        the kind of the operator token
-     * @param operandType the class type of the operand. This object is used for type checking
-     * @return an object of type {@link DecoratedUnaryOperator} which represents the decorated unary operator
-     */
-    private DecoratedUnaryOperator decorateUnaryOperator(TokenKind kind, Type operandType) {
-        if (operandType == Double.class || operandType == Integer.class) {
-            switch (kind) {
-                case PlusToken:
-                    return DecoratedUnaryOperator.Identity;
-                case MinusToken:
-                    return DecoratedUnaryOperator.Negation;
-                default:
-                    Logging.error(TAG, new Exception("Unexpected unary operator " + kind));
-                    return null;
-            }
-        }
-        if (operandType == Boolean.class) {
-            if (kind == TokenKind.NotToken) {
-                return DecoratedUnaryOperator.LogicalNegation;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * his method decorates a unary operator. There are only four tokens to consider when decorating a unary expression, that is, the PlusToken, MinusToken, MultToken and DivToken
-     *
-     * @param kind      the kind of the operator token
-     * @param leftType  the class type of the left operand of the expression. This object is used for type checking
-     * @param rightType the class type of the right operand of the expression. This object is used for type checking
-     * @return an object of type {@link DecoratedBinaryOperator} which represents the decorated binary operator
-     */
-    private DecoratedBinaryOperator decorateBinaryOperator(TokenKind kind, Type leftType, Type rightType) {
-        if ((leftType == Double.class || leftType == Integer.class) && (rightType == Double.class || rightType == Integer.class)) {
-            switch (kind) {
-                case PlusToken:
-                    return DecoratedBinaryOperator.Add;
-                case MinusToken:
-                    return DecoratedBinaryOperator.Sub;
-                case MultToken:
-                    return DecoratedBinaryOperator.Mult;
-                case DivToken:
-                    return DecoratedBinaryOperator.Div;
-                default:
-                    Logging.error(TAG, new Exception("Unexpected binary operator " + kind));
-                    return null;
-            }
-        }
-        if (leftType == Boolean.class && rightType == Boolean.class) {
-            switch (kind) {
-                case AndToken:
-                    return DecoratedBinaryOperator.LogicalAnd;
-                case OrToken:
-                    return DecoratedBinaryOperator.LogicalOr;
-            }
-
-
-        }
-        return null;
-    }
 
 }
 

@@ -1,12 +1,12 @@
 package com.example.msharp22.decoration;
 
 public class DecoratedUnaryExpression extends DecoratedExpression {
-    public DecoratedUnaryOperator opKind;
+    public DecoratedUnaryOperator op;
     public DecoratedExpression operand;
 
-    public DecoratedUnaryExpression(DecoratedUnaryOperator opKind, DecoratedExpression operand) {
+    public DecoratedUnaryExpression(DecoratedUnaryOperator op, DecoratedExpression operand) {
         super(DecoratedNodeKind.UnaryExpression, operand.type);
-        this.opKind = opKind;
+        this.op = op;
         this.operand = operand;
     }
 }

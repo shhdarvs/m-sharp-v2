@@ -1,14 +1,16 @@
 package com.example.msharp22.decoration;
 
+import java.lang.reflect.Type;
+
 public class DecoratedBinaryExpression extends DecoratedExpression {
     public DecoratedExpression left;
-    public DecoratedBinaryOperator opKind;
+    public DecoratedBinaryOperator op;
     public DecoratedExpression right;
 
-    public DecoratedBinaryExpression(DecoratedExpression left, DecoratedBinaryOperator opKind, DecoratedExpression right) {
-        super(DecoratedNodeKind.BinaryExpression, left.type);
+    public DecoratedBinaryExpression(DecoratedExpression left, DecoratedBinaryOperator op, DecoratedExpression right) {
+        super(DecoratedNodeKind.BinaryExpression, op.returnType);
         this.left = left;
-        this.opKind = opKind;
+        this.op = op;
         this.right = right;
     }
 }

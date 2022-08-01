@@ -13,7 +13,7 @@ public class SyntaxHelper {
             case PlusToken:
             case MinusToken:
             case NotToken:
-                return 5;
+                return 6;
 
             // If the operator is not a binary operator, return precedence of 0
             default:
@@ -32,10 +32,14 @@ public class SyntaxHelper {
             // Higher precedence is given to the * and / operators
             case MultToken:
             case DivToken:
-                return 4;
+                return 5;
 
             case PlusToken:
             case MinusToken:
+                return 4;
+
+            case EqualsToken:
+            case NotEqualsToken:
                 return 3;
 
             case AndToken:
