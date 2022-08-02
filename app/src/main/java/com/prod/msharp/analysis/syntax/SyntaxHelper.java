@@ -15,7 +15,7 @@ public class SyntaxHelper {
             case NotToken:
                 return 6;
 
-            // If the operator is not a binary operator, return precedence of 0
+            // If the operator is not a unary operator, return precedence of 0
             default:
                 return 0;
         }

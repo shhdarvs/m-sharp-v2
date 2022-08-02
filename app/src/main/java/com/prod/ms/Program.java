@@ -4,6 +4,9 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.prod.msharp.analysis.Compilation;
+import com.prod.msharp.analysis.Diagnostic;
+import com.prod.msharp.analysis.DiagnosticSet;
 import com.prod.msharp.analysis.Evaluator;
 import com.prod.msharp.analysis.decoration.Decorate;
 import com.prod.msharp.analysis.decoration.DecoratedExpression;
@@ -50,29 +53,24 @@ public class Program {
             }
 
             //Parse the source program and decorate the tree
-            SyntaxTree syntaxTree = SyntaxTree.parse(line);
-            Decorate decorate = new Decorate();
-            DecoratedExpression decoratedExpression = decorate.decorateExpression(syntaxTree.root);
+            var syntaxTree = SyntaxTree.parse(line);
+            var compilation = new Compilation(syntaxTree);
+            var result = compilation.evaluate();
 
-            List<String> diagnostics = Stream
-                    .concat(syntaxTree.diagnostics.stream(), decorate.diagnostics.stream())
-                    .collect(Collectors.toList());
+            DiagnosticSet diagnostics = result.diagnostics;
 
             if (showTree) {
                 prettyPrint(syntaxTree.root, "", true);
                 System.out.println();
             }
 
-
-            if (diagnostics.size() > 0) {
+            if (!diagnostics.isEmpty()) {
                 System.out.print(ConsoleColours.TEXT_RED);
-                for (String d : diagnostics)
+                for (Diagnostic d : diagnostics.diagnostics)
                     System.out.println(d);
                 System.out.print(ConsoleColours.TEXT_RESET);
-            } else {
-                Evaluator eval = new Evaluator(decoratedExpression);
-                System.out.println("Result: " + eval.evaluate());
-            }
+            } else
+                System.out.println("Result: " + result.value);
 
             System.out.println();
 

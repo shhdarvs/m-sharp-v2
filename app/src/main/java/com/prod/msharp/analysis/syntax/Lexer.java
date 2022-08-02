@@ -1,7 +1,7 @@
 package com.prod.msharp.analysis.syntax;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.prod.msharp.analysis.DiagnosticSet;
+import com.prod.msharp.analysis.TextSpan;
 
 /**
  * This class scans a source program and recognizes tokens in the source program (Lexical Analysis).
@@ -14,7 +14,7 @@ public class Lexer {
     private int pos;
     private char current;
 
-    private List<String> diagnostics = new ArrayList<>();
+    public DiagnosticSet diagnostics = new DiagnosticSet();
 
     public Lexer(String text) {
         this.text = text;
@@ -58,20 +58,14 @@ public class Lexer {
         return peek(1);
     }
 
-    /**
-     * This method returns an iterable over the array list named diagnostics
-     *
-     * @return an iterable over diagnostics
-     */
-    public List<String> getDiagnostics() {
-        return diagnostics;
-    }
 
     /**
      * This method advances the current token to be the next token if available
      */
     public Token nextToken() {
         current = current();
+
+        int start = pos;
 
         if (pos >= length)
             return new Token(TokenKind.EOFToken, pos, "\0", null);
@@ -81,8 +75,6 @@ public class Lexer {
         }
 
         if (Character.isWhitespace(current)) {
-            int start = pos;
-
             while (Character.isWhitespace(current))
                 next();
 
@@ -92,8 +84,6 @@ public class Lexer {
         }
 
         if (Character.isLetter(current)) {
-            int start = pos;
-
             while (Character.isLetter(current))
                 next();
 
@@ -118,25 +108,39 @@ public class Lexer {
             case ')':
                 return new Token(TokenKind.ClosedParenthesis, next(), ")", null);
             case '!':
-                if (lookahead() == '=')
-                    return new Token(TokenKind.NotEqualsToken, pos += 2, "==", null);
+                if (lookahead() == '=') {
+                    pos += 2;
+                    return new Token(TokenKind.NotEqualsToken, start, "==", null);
+                }
                 return new Token(TokenKind.NotToken, next(), "!", null);
             case '&':
-                if (lookahead() == '&')
-                    return new Token(TokenKind.AndToken, pos += 2, "&&", null);
+                if (lookahead() == '&') {
+                    pos += 2;
+                    return new Token(TokenKind.AndToken, start, "&&", null);
+                }
                 break;
             case '|':
-                if (lookahead() == '|')
-                    return new Token(TokenKind.OrToken, pos += 2, "||", null);
+                if (lookahead() == '|') {
+                    pos += 2;
+                    return new Token(TokenKind.OrToken, start, "||", null);
+                }
                 break;
             case '=':
-                if (lookahead() == '=')
-                    return new Token(TokenKind.EqualsToken, pos += 2, "==", null);
+                if (lookahead() == '=') {
+                    pos += 2;
+                    return new Token(TokenKind.EqualsToken, start, "==", null);
+                }
+                break;
+            case '<':
+                if (lookahead() == '-') {
+                    pos += 2;
+                    return new Token(TokenKind.ArrowToken, start, "<-", null);
+                }
                 break;
 
         }
 
-        diagnostics.add(String.format("ERROR: incorrect character input: %s", current));
+        diagnostics.reportIncorrectCharacter(pos, current);
         return new Token(TokenKind.ERROR, next(), this.text.substring(this.pos - 1, (this.pos - 1) + 1), null);
     }
 
@@ -167,9 +171,21 @@ public class Lexer {
         int length = pos - start;
         String text = this.text.substring(start, start + length);
 
-        if (dots == 0)
+        if (dots == 0) {
+            try {
+                int value = Integer.parseInt(text);
+            } catch (NumberFormatException e) {
+                diagnostics.reportInvalidNumber(new TextSpan(start, length), text, Integer.class);
+            }
             return new Token(TokenKind.IntegerToken, start, text, Integer.parseInt(text));
-        else
+        } else {
+            try {
+                double value = Double.parseDouble(text);
+            } catch (NumberFormatException e) {
+                diagnostics.reportInvalidNumber(new TextSpan(start, length), text, Double.class);
+            }
             return new Token(TokenKind.DoubleToken, start, text, Double.parseDouble(text));
+        }
+
     }
 }

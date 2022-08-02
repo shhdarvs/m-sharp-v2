@@ -8,6 +8,10 @@ public class LiteralExpression extends Expression {
     public Token literal;
     public Object value;
 
+    public LiteralExpression(Token literal) {
+        this.literal = literal;
+    }
+
     public LiteralExpression(Token literal, Object value) {
         this.literal = literal;
         this.value = value;

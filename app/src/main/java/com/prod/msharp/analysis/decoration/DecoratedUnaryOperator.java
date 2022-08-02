@@ -36,11 +36,11 @@ public class DecoratedUnaryOperator {
         this.returnType = returnType;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.P)
     public static DecoratedUnaryOperator decorate(TokenKind tokenKind, Type operandType) {
         for (DecoratedUnaryOperator duo : operators) {
             if (duo.tokenKind == tokenKind &&
-                    duo.operandType.stream().anyMatch(b -> b.getClass() == operandType.getClass()))
+                    duo.operandType.stream().anyMatch(b -> b.getTypeName().equals(operandType.getTypeName())))
                 return duo;
         }
 

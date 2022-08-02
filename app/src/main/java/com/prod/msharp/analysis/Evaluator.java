@@ -1,27 +1,21 @@
 package com.prod.msharp.analysis;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.example.msharp.Logging;
+import com.prod.msharp.analysis.decoration.Decorate;
 import com.prod.msharp.analysis.decoration.DecoratedBinaryExpression;
 import com.prod.msharp.analysis.decoration.DecoratedExpression;
 import com.prod.msharp.analysis.decoration.DecoratedLiteralExpression;
 import com.prod.msharp.analysis.decoration.DecoratedUnaryExpression;
 import com.prod.msharp.analysis.syntax.SyntaxTree;
 
-class Compilation {
-    public SyntaxTree tree;
-
-    public Compilation(SyntaxTree tree) {
-        this.tree = tree;
-    }
-
-    public EvalResult evalute() {
-
-    }
-}
-
-class EvalResult {
-
-}
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This class will evaluate the result of an expression
@@ -55,6 +49,7 @@ public class Evaluator {
         // 1. BinaryExpression
         // 2. NumberExpression (Either containing a int literal or double literal
         //3. Literals: 2, 5.6, true
+
         if (node instanceof DecoratedLiteralExpression)
             return ((DecoratedLiteralExpression) node).value;
 

@@ -15,6 +15,7 @@ public enum TokenKind {
     MultToken,
     DivToken,
     NotToken,
+    ArrowToken,
     AndToken,
     OrToken,
     EqualsToken,
@@ -29,6 +30,8 @@ public enum TokenKind {
 
     //Expressions,
     Literal,
+    NameExpression,
+    AssignmentExpression,
     BinaryExpression,
     UnaryExpression,
     ParenthesizedExpression

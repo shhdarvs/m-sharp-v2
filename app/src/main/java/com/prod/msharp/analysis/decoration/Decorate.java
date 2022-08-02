@@ -5,9 +5,12 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.example.msharp.Logging;
+import com.prod.msharp.analysis.DiagnosticSet;
+import com.prod.msharp.analysis.syntax.AssignmentExpression;
 import com.prod.msharp.analysis.syntax.BinaryExpression;
 import com.prod.msharp.analysis.syntax.Expression;
 import com.prod.msharp.analysis.syntax.LiteralExpression;
+import com.prod.msharp.analysis.syntax.NameExpression;
 import com.prod.msharp.analysis.syntax.ParenthesizedExpression;
 import com.prod.msharp.analysis.syntax.UnaryExpression;
 
@@ -17,7 +20,7 @@ import java.util.List;
 public class Decorate {
     public static final String TAG = "Decorate";
 
-    public List<String> diagnostics = new ArrayList<>();
+    public DiagnosticSet diagnostics = new DiagnosticSet();
 
     /**
      * This method decorates an expression depending on the type. The decoration for unary and binary expression performs some type checking
@@ -30,18 +33,27 @@ public class Decorate {
         switch (expression.kind()) {
             case Literal:
                 return decorateLiteralExpression((LiteralExpression) expression);
+            case NameExpression:
+                return decorateNameExpression(((NameExpression) expression));
+            case AssignmentExpression:
+                return decorateAssignmentExpression(((AssignmentExpression) expression));
             case UnaryExpression:
                 return decorateUnaryExpression((UnaryExpression) expression);
             case BinaryExpression:
                 return decorateBinaryExpression((BinaryExpression) expression);
             case ParenthesizedExpression:
-                return decorateExpression(((ParenthesizedExpression) expression).expression);
+                return decorateParenthesizedExpression(((ParenthesizedExpression) expression));
+
+
             default:
                 Logging.error(TAG, new Exception("Unexpected syntax " + expression.kind()));
                 return null;
         }
 
     }
+
+
+
 
     /**
      * This method is responsible for decorating a literal expression. It will convert the value of the literal field of the LiteralExpression object to either an int or double
@@ -54,6 +66,14 @@ public class Decorate {
 
         return new DecoratedLiteralExpression(value);
 
+    }
+
+    private DecoratedExpression decorateNameExpression(NameExpression expression) {
+        return null;
+    }
+
+    private DecoratedExpression decorateAssignmentExpression(AssignmentExpression expression) {
+        return null;
     }
 
     /**
@@ -69,7 +89,7 @@ public class Decorate {
         DecoratedUnaryOperator decoratedOperator = DecoratedUnaryOperator.decorate(expression.operator.kind, decoratedOperand.type.get(0));
 
         if (decoratedOperator == null) {
-            diagnostics.add(String.format("Unary operator %s is not defined for type %s", expression.operator.text, decoratedOperand.type));
+            diagnostics.reportUndefinedUnaryOperator(expression.operator.textSpan, expression.operator.text, decoratedOperand.type.get(0));
             return decoratedOperand;
         }
         return new DecoratedUnaryExpression(decoratedOperator, decoratedOperand);
@@ -89,10 +109,21 @@ public class Decorate {
         DecoratedBinaryOperator decoratedOperator = DecoratedBinaryOperator.decorate(expression.operator.kind, decoratedLeft.type.get(0), decoratedRight.type.get(0));
 
         if (decoratedOperator == null) {
-            diagnostics.add(String.format("Binary operator %s is not defined for types %s and %s", expression.operator.text, decoratedLeft.type, decoratedRight.type));
+            diagnostics.reportUndefinedBinaryOperator(expression.operator.textSpan, expression.operator.text, decoratedLeft.type.get(0), decoratedRight.type.get(0));
             return decoratedLeft;
         }
         return new DecoratedBinaryExpression(decoratedLeft, decoratedOperator, decoratedRight);
+    }
+
+    /**
+     * This method is responsible for decorating a parenthesized expression. It calls {@link Decorate#decorateExpression(Expression)} on the {@link ParenthesizedExpression} object which is passed in as a parameter.
+     *
+     * @param expression the parenthesized expression to be decorated
+     * @return an object of type {@link DecoratedExpression} which represents the decorated parenthesized expression
+     */
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    private DecoratedExpression decorateParenthesizedExpression(ParenthesizedExpression expression) {
+        return decorateExpression(expression.expression);
     }
 
 

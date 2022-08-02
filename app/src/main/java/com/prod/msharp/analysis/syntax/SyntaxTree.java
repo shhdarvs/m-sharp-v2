@@ -4,6 +4,9 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.prod.msharp.analysis.Diagnostic;
+import com.prod.msharp.analysis.DiagnosticSet;
+
 import java.util.List;
 
 /**
@@ -12,9 +15,9 @@ import java.util.List;
 public class SyntaxTree {
     public Expression root;
     public Token EOFToken;
-    public List<String> diagnostics;
+    public DiagnosticSet diagnostics;
 
-    public SyntaxTree(Expression root, Token EOFToken, List<String> diagnostics) {
+    public SyntaxTree(Expression root, Token EOFToken, DiagnosticSet diagnostics) {
         this.root = root;
         this.EOFToken = EOFToken;
         this.diagnostics = diagnostics;
