@@ -17,7 +17,7 @@ public class DecoratedUnaryOperator {
     List<Type> returnType;
 
     private static final DecoratedUnaryOperator[] operators = {
-            new DecoratedUnaryOperator(TokenKind.NotToken, DecoratedUnaryOperatorKind.LogicalNegation, boolean.class),
+            new DecoratedUnaryOperator(TokenKind.NotToken, DecoratedUnaryOperatorKind.LogicalNegation, Boolean.class),
             new DecoratedUnaryOperator(TokenKind.PlusToken, DecoratedUnaryOperatorKind.Identity, Integer.class, Double.class),
             new DecoratedUnaryOperator(TokenKind.MinusToken, DecoratedUnaryOperatorKind.Negation, Integer.class, Double.class)
     };

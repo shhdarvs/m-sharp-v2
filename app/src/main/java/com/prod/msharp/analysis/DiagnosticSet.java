@@ -104,6 +104,15 @@ public class DiagnosticSet {
     }
 
     /**
+     * This method reports an undefined variable error. This occurs when a variable that has not been created yet is the identifier token text of a name expresion
+     * @param textSpan the span of the variable name
+     * @param name the variable name
+     */
+    public void reportUndefinedVariable(TextSpan textSpan, String name) {
+        report(textSpan, String.format("Variable '%s' has not been defined yet", name));
+    }
+
+    /**
      * This method returns true if the diagnostic set is empty, and false if the diagnostic set contains items.
      *
      * @return true if the diagnostic set is empty, and false if the diagnostic set contains items

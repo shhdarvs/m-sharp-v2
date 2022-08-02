@@ -161,7 +161,7 @@ public class Parser {
         switch (current.kind) {
             case OpenParenthesis: {
                 var left = nextToken();
-                var exp = parseBinaryExpression(0);
+                var exp = parseAssignmentExpression();
                 var right = matchToken(TokenKind.ClosedParenthesis);
                 return new ParenthesizedExpression(left, exp, right);
             }

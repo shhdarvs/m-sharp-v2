@@ -7,7 +7,7 @@ import java.util.List;
 public class AssignmentExpression extends Expression {
     public Token identifierToken;
     Token arrowToken;
-    Expression expression;
+    public Expression expression;
 
     public AssignmentExpression(Token identifierToken, Token arrowToken, Expression expression) {
         this.identifierToken = identifierToken;

@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.msharp.Logging;
 import com.prod.msharp.analysis.DiagnosticSet;
+import com.prod.msharp.analysis.VariableSymbol;
 import com.prod.msharp.analysis.syntax.AssignmentExpression;
 import com.prod.msharp.analysis.syntax.BinaryExpression;
 import com.prod.msharp.analysis.syntax.Expression;
@@ -15,12 +16,20 @@ import com.prod.msharp.analysis.syntax.ParenthesizedExpression;
 import com.prod.msharp.analysis.syntax.UnaryExpression;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class Decorate {
     public static final String TAG = "Decorate";
 
+    public Map<VariableSymbol, Object> variables;
     public DiagnosticSet diagnostics = new DiagnosticSet();
+
+    public Decorate(Map<VariableSymbol, Object> variables) {
+        this.variables = variables;
+    }
 
     /**
      * This method decorates an expression depending on the type. The decoration for unary and binary expression performs some type checking
@@ -53,8 +62,6 @@ public class Decorate {
     }
 
 
-
-
     /**
      * This method is responsible for decorating a literal expression. It will convert the value of the literal field of the LiteralExpression object to either an int or double
      *
@@ -68,12 +75,49 @@ public class Decorate {
 
     }
 
+    /**
+     * This method decorates a name expression or an expression which contains an identifier. It checks whether the variable exists in the variable map. If not, it is reported to the diagnostic. If so, an object of type {@link DecoratedVariableExpression} is returned as the decorated name expression.
+     *
+     * @param expression an object of type {@link NameExpression} which represents the name expression to be decorated
+     * @return an object of type {@link DecoratedExpression} which represents the decorated name expression.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private DecoratedExpression decorateNameExpression(NameExpression expression) {
-        return null;
+        var name = expression.identifierToken.text;
+        var value = variables.keySet()
+                .stream()
+                .filter(v -> Objects.equals(v.name, name))
+                .findAny()
+                .orElse(null);
+
+        if (value != null)
+            return new DecoratedVariableExpression(value);
+
+        diagnostics.reportUndefinedVariable(expression.identifierToken.textSpan, name);
+        return new DecoratedLiteralExpression(0);
     }
 
+    /**
+     * This method is responsible for decorating an assignment expression.
+     *
+     * @param expression an object of type {@link AssignmentExpression} which represents the assignment expression to be decorated
+     * @return an object of type {@link DecoratedExpression} which represents the decorated assignment expression
+     */
+    @RequiresApi(api = Build.VERSION_CODES.P)
     private DecoratedExpression decorateAssignmentExpression(AssignmentExpression expression) {
-        return null;
+        var name = expression.identifierToken.text;
+        var decoratedExpression = decorateExpression(expression.expression);
+
+        variables.keySet()
+                .stream()
+                .filter(v -> Objects.equals(v.name, name))
+                .findAny()
+                .ifPresent(existingVariable -> variables.remove(existingVariable));
+
+        var variable = new VariableSymbol(name, decoratedExpression.type.get(0));
+        variables.put(variable, null);
+
+        return new DecoratedAssignmentExpression(variable, decoratedExpression);
     }
 
     /**

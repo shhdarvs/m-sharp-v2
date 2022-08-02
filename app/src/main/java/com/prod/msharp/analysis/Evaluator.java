@@ -6,14 +6,18 @@ import androidx.annotation.RequiresApi;
 
 import com.example.msharp.Logging;
 import com.prod.msharp.analysis.decoration.Decorate;
+import com.prod.msharp.analysis.decoration.DecoratedAssignmentExpression;
 import com.prod.msharp.analysis.decoration.DecoratedBinaryExpression;
 import com.prod.msharp.analysis.decoration.DecoratedExpression;
 import com.prod.msharp.analysis.decoration.DecoratedLiteralExpression;
 import com.prod.msharp.analysis.decoration.DecoratedUnaryExpression;
+import com.prod.msharp.analysis.decoration.DecoratedVariableExpression;
 import com.prod.msharp.analysis.syntax.SyntaxTree;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,9 +28,11 @@ public class Evaluator {
     public static final String TAG = "Evaluator";
 
     public DecoratedExpression root;
+    public Map<VariableSymbol, Object> variables;
 
-    public Evaluator(DecoratedExpression root) {
+    public Evaluator(DecoratedExpression root, Map<VariableSymbol, Object> variables) {
         this.root = root;
+        this.variables = variables;
     }
 
     /**
@@ -52,6 +58,16 @@ public class Evaluator {
 
         if (node instanceof DecoratedLiteralExpression)
             return ((DecoratedLiteralExpression) node).value;
+
+        if (node instanceof DecoratedVariableExpression)
+            return variables.get(((DecoratedVariableExpression) node).variableSymbol);
+
+        if (node instanceof DecoratedAssignmentExpression) {
+            DecoratedAssignmentExpression a = (DecoratedAssignmentExpression) node;
+            var value = evaluateExpression(a.expression);
+            variables.put(a.variableSymbol, value);
+            return value;
+        }
 
         //Unary Expression: -4
         if (node instanceof DecoratedUnaryExpression) {

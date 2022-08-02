@@ -7,18 +7,15 @@ import androidx.annotation.RequiresApi;
 import com.prod.msharp.analysis.Compilation;
 import com.prod.msharp.analysis.Diagnostic;
 import com.prod.msharp.analysis.DiagnosticSet;
-import com.prod.msharp.analysis.Evaluator;
-import com.prod.msharp.analysis.decoration.Decorate;
-import com.prod.msharp.analysis.decoration.DecoratedExpression;
+import com.prod.msharp.analysis.VariableSymbol;
 import com.prod.msharp.analysis.syntax.AST;
 import com.prod.msharp.analysis.syntax.ConsoleColours;
 import com.prod.msharp.analysis.syntax.SyntaxTree;
 import com.prod.msharp.analysis.syntax.Token;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Program {
 
@@ -29,6 +26,7 @@ public class Program {
     @RequiresApi(api = Build.VERSION_CODES.R)
     public static void main(String[] args) {
         boolean showTree = false;
+        Map<VariableSymbol, Object> variables = new HashMap<>();
 
         Scanner sc = new Scanner(System.in);
 
@@ -55,7 +53,7 @@ public class Program {
             //Parse the source program and decorate the tree
             var syntaxTree = SyntaxTree.parse(line);
             var compilation = new Compilation(syntaxTree);
-            var result = compilation.evaluate();
+            var result = compilation.evaluate(variables);
 
             DiagnosticSet diagnostics = result.diagnostics;
 
