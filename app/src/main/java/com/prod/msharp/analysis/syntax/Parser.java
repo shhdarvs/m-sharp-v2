@@ -159,40 +159,53 @@ public class Parser {
      */
     private Expression parsePrimaryExpression() {
         switch (current.kind) {
-            case OpenParenthesis: {
-                var left = nextToken();
-                var exp = parseAssignmentExpression();
-                var right = matchToken(TokenKind.ClosedParenthesis);
-                return new ParenthesizedExpression(left, exp, right);
-            }
+            case OpenParenthesis:
+                return parseParenthesizedExpression();
 
-            case IntegerToken: {
-                var numToken = matchToken(TokenKind.IntegerToken);
-                return new LiteralExpression(numToken, numToken.value);
-            }
+            case IntegerToken:
+                return parseIntegerLiteral();
 
-            case DoubleToken: {
-                var numToken = matchToken(TokenKind.DoubleToken);
-                return new LiteralExpression(numToken, numToken.value);
-            }
+            case DoubleToken:
+                return parseDoubleLiteral();
 
             case TrueKeyword:
-            case FalseKeyword: {
-                var keyword = nextToken();
-                return new LiteralExpression(current, keyword.kind == TokenKind.TrueKeyword);
-            }
+            case FalseKeyword:
+                return parseBooleanLiteral();
 
-            case IdentifierToken: {
-                var identifierToken = nextToken();
-                return new NameExpression(identifierToken);
-            }
-
+            case IdentifierToken:
             default:
-                var numberToken = matchToken(TokenKind.DoubleToken);
-                return new LiteralExpression(numberToken);
+                return parseNameExpression();
         }
 
+    }
 
+    private Expression parseParenthesizedExpression() {
+        var left = matchToken(TokenKind.OpenParenthesis);
+        var exp = parseAssignmentExpression();
+        var right = matchToken(TokenKind.ClosedParenthesis);
+        return new ParenthesizedExpression(left, exp, right);
+    }
+
+    private Expression parseIntegerLiteral() {
+        var numToken = matchToken(TokenKind.IntegerToken);
+        return new LiteralExpression(numToken, numToken.value);
+    }
+
+    private Expression parseDoubleLiteral() {
+        var numToken = matchToken(TokenKind.DoubleToken);
+        return new LiteralExpression(numToken, numToken.value);
+    }
+
+    private Expression parseBooleanLiteral() {
+        var keyword = current.kind == TokenKind.TrueKeyword
+                ? matchToken(TokenKind.TrueKeyword)
+                : matchToken(TokenKind.FalseKeyword);
+        return new LiteralExpression(keyword, current.kind == TokenKind.TrueKeyword);
+    }
+
+    private Expression parseNameExpression() {
+        var identifierToken = matchToken(TokenKind.IdentifierToken);
+        return new NameExpression(identifierToken);
     }
 
 }
