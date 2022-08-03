@@ -35,7 +35,7 @@ public class Program {
 
             String line = sc.nextLine();
 
-            if ((line == null) && line.isEmpty() && line.trim().isEmpty())
+            if ((line == null) || line.isEmpty() || line.trim().isEmpty())
                 return;
 
             if (line.equals("#showTree")) {

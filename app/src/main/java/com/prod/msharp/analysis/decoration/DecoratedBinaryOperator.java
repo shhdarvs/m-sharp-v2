@@ -24,12 +24,12 @@ public class DecoratedBinaryOperator {
             new DecoratedBinaryOperator(TokenKind.MultToken, DecoratedBinaryOperatorKind.Mult, Integer.class, Double.class),
             new DecoratedBinaryOperator(TokenKind.DivToken, DecoratedBinaryOperatorKind.Div, Integer.class, Double.class),
 
-            new DecoratedBinaryOperator(TokenKind.EqualsToken, DecoratedBinaryOperatorKind.Equals, Arrays.asList(Integer.class, Double.class), Collections.singletonList(Boolean.class)),
+            new DecoratedBinaryOperator(TokenKind.DoubleEqualsToken, DecoratedBinaryOperatorKind.Equals, Arrays.asList(Integer.class, Double.class), Collections.singletonList(Boolean.class)),
             new DecoratedBinaryOperator(TokenKind.NotEqualsToken, DecoratedBinaryOperatorKind.NotEquals, Arrays.asList(Integer.class, Double.class), Collections.singletonList(Boolean.class)),
 
             new DecoratedBinaryOperator(TokenKind.AndToken, DecoratedBinaryOperatorKind.LogicalAnd, Boolean.class),
             new DecoratedBinaryOperator(TokenKind.OrToken, DecoratedBinaryOperatorKind.LogicalOr, Boolean.class),
-            new DecoratedBinaryOperator(TokenKind.EqualsToken, DecoratedBinaryOperatorKind.Equals, Boolean.class),
+            new DecoratedBinaryOperator(TokenKind.DoubleEqualsToken, DecoratedBinaryOperatorKind.Equals, Boolean.class),
             new DecoratedBinaryOperator(TokenKind.NotEqualsToken, DecoratedBinaryOperatorKind.NotEquals, Boolean.class),
 
     };

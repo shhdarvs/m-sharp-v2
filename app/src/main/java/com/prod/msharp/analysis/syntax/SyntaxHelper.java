@@ -38,7 +38,7 @@ public class SyntaxHelper {
             case MinusToken:
                 return 4;
 
-            case EqualsToken:
+            case DoubleEqualsToken:
             case NotEqualsToken:
                 return 3;
 
@@ -65,4 +65,38 @@ public class SyntaxHelper {
         }
     }
 
+    public static String getText(TokenKind kind) {
+        switch (kind) {
+            case PlusToken:
+                return "+";
+            case MinusToken:
+                return "-";
+            case MultToken:
+                return "*";
+            case DivToken:
+                return "/";
+            case NotToken:
+                return "!";
+            case ArrowToken:
+                return "<-";
+            case AndToken:
+                return "&";
+            case OrToken:
+                return "|";
+            case DoubleEqualsToken:
+                return "==";
+            case NotEqualsToken:
+                return "!=";
+            case OpenParenthesis:
+                return "(";
+            case ClosedParenthesis:
+                return ")";
+            case TrueKeyword:
+                return "true";
+            case FalseKeyword:
+                return "false";
+            default:
+                return null;
+        }
+    }
 }

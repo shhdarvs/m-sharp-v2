@@ -18,7 +18,7 @@ public enum TokenKind {
     ArrowToken,
     AndToken,
     OrToken,
-    EqualsToken,
+    DoubleEqualsToken,
     NotEqualsToken,
     OpenParenthesis,
     ClosedParenthesis,

@@ -14,6 +14,10 @@ public class Lexer {
     private int pos;
     private char current;
 
+    private int start;
+    private TokenKind kind;
+    private Object value;
+
     public DiagnosticSet diagnostics = new DiagnosticSet();
 
     public Lexer(String text) {
@@ -28,9 +32,8 @@ public class Lexer {
     /**
      * This method returns the current integer position of the next character from the input string. If the current character is the last character, current is set to the empty character (EOF)
      *
-     * @return the current integer position of the current character
      */
-    private int next() {
+    private void next() {
         pos++;
 
         if (pos < length)
@@ -38,7 +41,6 @@ public class Lexer {
         else
             current = '\0';
 
-        return pos;
     }
 
     private char peek(int offset) {
@@ -65,93 +67,118 @@ public class Lexer {
     public Token nextToken() {
         current = current();
 
-        int start = pos;
-
-        if (pos >= length)
-            return new Token(TokenKind.EOFToken, pos, "\0", null);
-
-        if (Character.isDigit(current)) {
-            return makeIntOrDouble();
-        }
-
-        if (Character.isWhitespace(current)) {
-            while (Character.isWhitespace(current))
-                next();
-
-            int length = pos - start;
-            String text = this.text.substring(start, start + length);
-            return new Token(TokenKind.WhitespaceToken, start, text, null);
-        }
-
-        if (Character.isLetter(current)) {
-            while (Character.isLetter(current))
-                next();
-
-            int length = pos - start;
-            String text = this.text.substring(start, start + length);
-            TokenKind kind = SyntaxHelper.getKeyword(text);
-
-            return new Token(kind, start, text, null);
-        }
+        start = pos;
+        kind = TokenKind.ERROR;
+        value = null;
 
         switch (current) {
+            case '\0':
+                kind = TokenKind.EOFToken;
+                break;
             case '+':
-                return new Token(TokenKind.PlusToken, next(), "+", null);
+                kind = TokenKind.PlusToken;
+                pos++;
+                break;
             case '-':
-                return new Token(TokenKind.MinusToken, next(), "-", null);
+                kind = TokenKind.MinusToken;
+                pos++;
+                break;
             case '*':
-                return new Token(TokenKind.MultToken, next(), "*", null);
+                kind = TokenKind.MultToken;
+                pos++;
+                break;
             case '/':
-                return new Token(TokenKind.DivToken, next(), "/", null);
+                kind = TokenKind.DivToken;
+                pos++;
+                break;
             case '(':
-                return new Token(TokenKind.OpenParenthesis, next(), "(", null);
+                kind = TokenKind.OpenParenthesis;
+                pos++;
+                break;
             case ')':
-                return new Token(TokenKind.ClosedParenthesis, next(), ")", null);
+                kind = TokenKind.ClosedParenthesis;
+                pos++;
+                break;
             case '!':
                 if (lookahead() == '=') {
                     pos += 2;
-                    return new Token(TokenKind.NotEqualsToken, start, "==", null);
+                    kind = TokenKind.NotEqualsToken;
+                } else {
+                    pos++;
+                    kind = TokenKind.NotToken;
                 }
-                return new Token(TokenKind.NotToken, next(), "!", null);
+                break;
             case '&':
                 if (lookahead() == '&') {
                     pos += 2;
-                    return new Token(TokenKind.AndToken, start, "&&", null);
+                    kind = TokenKind.AndToken;
                 }
                 break;
             case '|':
                 if (lookahead() == '|') {
                     pos += 2;
-                    return new Token(TokenKind.OrToken, start, "||", null);
+                    kind = TokenKind.OrToken;
                 }
                 break;
             case '=':
                 if (lookahead() == '=') {
                     pos += 2;
-                    return new Token(TokenKind.EqualsToken, start, "==", null);
+                    kind = TokenKind.DoubleEqualsToken;
                 }
                 break;
             case '<':
                 if (lookahead() == '-') {
                     pos += 2;
-                    return new Token(TokenKind.ArrowToken, start, "<-", null);
+                    kind = TokenKind.ArrowToken;
                 }
+                break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                readNumber();
+                break;
+            case ' ':
+            case '\t':
+            case '\n':
+            case '\r':
+                readWhiteSpace();
+                break;
+            default:
+                if (Character.isLetter(current))
+                    readIdentifierOrKeyword();
+                else if (Character.isWhitespace(current))
+                    readWhiteSpace();
+                else {
+                    diagnostics.reportIncorrectCharacter(pos, current);
+                    pos++;
+                }
+
                 break;
 
         }
 
-        diagnostics.reportIncorrectCharacter(pos, current);
-        return new Token(TokenKind.ERROR, next(), this.text.substring(this.pos - 1, (this.pos - 1) + 1), null);
+        var length = pos - start;
+        var text = SyntaxHelper.getText(kind);
+
+        if (text == null)
+            text = this.text.substring(start, start + length);
+
+        return new Token(kind, start, text, value);
+
     }
 
     /**
      * Since the language makes use of both integer and double types, this method either makes an integer/double token
      *
-     * @return a token which is either an integer or double token
      */
-    private Token makeIntOrDouble() {
-        int start = pos;
-
+    private void readNumber() {
         StringBuilder num = new StringBuilder();
         int dots = 0;
 
@@ -171,21 +198,51 @@ public class Lexer {
         int length = pos - start;
         String text = this.text.substring(start, start + length);
 
-        if (dots == 0) {
-            try {
-                int value = Integer.parseInt(text);
-            } catch (NumberFormatException e) {
-                diagnostics.reportInvalidNumber(new TextSpan(start, length), text, Integer.class);
-            }
-            return new Token(TokenKind.IntegerToken, start, text, Integer.parseInt(text));
-        } else {
-            try {
-                double value = Double.parseDouble(text);
-            } catch (NumberFormatException e) {
-                diagnostics.reportInvalidNumber(new TextSpan(start, length), text, Double.class);
-            }
-            return new Token(TokenKind.DoubleToken, start, text, Double.parseDouble(text));
-        }
+        if (dots == 0)
+            readInteger(text);
+        else
+            readDouble(text);
 
     }
-}
+
+    private void readInteger(String text) {
+        int value = 0;
+        try {
+            value = Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            diagnostics.reportInvalidNumber(new TextSpan(start, length), text, Integer.class);
+        } finally {
+            this.kind = TokenKind.IntegerToken;
+            this.value = value;
+        }
+    }
+
+    private void readDouble(String text) {
+        double value = 0;
+        try {
+            value = Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            diagnostics.reportInvalidNumber(new TextSpan(start, length), text, Double.class);
+        } finally {
+            this.kind = TokenKind.DoubleToken;
+            this.value = value;
+        }
+    }
+
+    private void readWhiteSpace() {
+        while (Character.isWhitespace(current))
+            next();
+
+        kind = TokenKind.WhitespaceToken;
+    }
+
+    private void readIdentifierOrKeyword() {
+        while (Character.isLetter(current))
+            next();
+
+        int length = pos - start;
+        String text = this.text.substring(start, start + length);
+        kind = SyntaxHelper.getKeyword(text);
+    }
+
+} //close Lexer
