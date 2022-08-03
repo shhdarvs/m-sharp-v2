@@ -1,6 +1,6 @@
 package com.prod.msharp.analysis.decoration;
 
-enum DecoratedNodeKind {
+public enum DecoratedNodeKind {
     LiteralExpression,
     VariableExpression,
     AssignmentExpression,

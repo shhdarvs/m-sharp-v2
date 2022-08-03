@@ -10,6 +10,7 @@ import com.prod.msharp.analysis.decoration.DecoratedAssignmentExpression;
 import com.prod.msharp.analysis.decoration.DecoratedBinaryExpression;
 import com.prod.msharp.analysis.decoration.DecoratedExpression;
 import com.prod.msharp.analysis.decoration.DecoratedLiteralExpression;
+import com.prod.msharp.analysis.decoration.DecoratedNodeKind;
 import com.prod.msharp.analysis.decoration.DecoratedUnaryExpression;
 import com.prod.msharp.analysis.decoration.DecoratedVariableExpression;
 import com.prod.msharp.analysis.syntax.SyntaxTree;
@@ -51,59 +52,68 @@ public class Evaluator {
      * @return the result of the expression (double)
      */
     private Object evaluateExpression(DecoratedExpression node) {
-        //Current time of coding we only have two expressions:
-        // 1. BinaryExpression
-        // 2. NumberExpression (Either containing a int literal or double literal
-        //3. Literals: 2, 5.6, true
+        switch (node.kind) {
+            case LiteralExpression:
+                return evaluateLiteralExpression((DecoratedLiteralExpression) node);
+            case VariableExpression:
+                return evaluateVariableExpression((DecoratedVariableExpression) node);
+            case AssignmentExpression:
+                return evaluateAssignmentExpression((DecoratedAssignmentExpression) node);
+            case UnaryExpression:
+                return evaluateUnaryExpression((DecoratedUnaryExpression) node);
+            case BinaryExpression:
+                return evaluateBinaryExpression((DecoratedBinaryExpression) node);
+            default:
+                return null;
+        }
+    }
 
-        if (node instanceof DecoratedLiteralExpression)
-            return ((DecoratedLiteralExpression) node).value;
+    private Object evaluateLiteralExpression(DecoratedLiteralExpression node) {
+        return node.value;
+    }
 
-        if (node instanceof DecoratedVariableExpression)
-            return variables.get(((DecoratedVariableExpression) node).variableSymbol);
+    private Object evaluateVariableExpression(DecoratedVariableExpression node) {
+        return variables.get(node.variableSymbol);
+    }
 
-        if (node instanceof DecoratedAssignmentExpression) {
-            DecoratedAssignmentExpression a = (DecoratedAssignmentExpression) node;
-            var value = evaluateExpression(a.expression);
-            variables.put(a.variableSymbol, value);
-            return value;
+    private Object evaluateAssignmentExpression(DecoratedAssignmentExpression node) {
+        DecoratedAssignmentExpression a = node;
+        var value = evaluateExpression(a.expression);
+        variables.put(a.variableSymbol, value);
+        return value;
+    }
+
+    private Object evaluateUnaryExpression(DecoratedUnaryExpression node) {
+        Object result = null;
+
+        result = evaluateExpression(node.operand);
+
+        switch (node.op.kind) {
+            case Identity:
+                return result;
+            case Negation:
+                if (result.getClass() == Integer.class) {
+                    return -(int) result;
+                }
+                return -(double) result;
+            case LogicalNegation:
+                return !(boolean) result;
+            default:
+                Logging.error(TAG, new Exception("Unexpected unary operator: " + node.op));
+                break;
         }
 
-        //Unary Expression: -4
-        if (node instanceof DecoratedUnaryExpression) {
-            DecoratedUnaryExpression due = (DecoratedUnaryExpression) node;
-            Object operandResult = null;
-            double doubleOperandResult;
+        return result;
+    }
 
-            operandResult = evaluateExpression(due.operand);
+    private Object evaluateBinaryExpression(DecoratedBinaryExpression node) {
+        Object left = evaluateExpression(node.left);
+        Object right = evaluateExpression(node.right);
 
-            switch (((DecoratedUnaryExpression) node).op.kind) {
-                case Identity:
-                    return operandResult;
-                case Negation:
-                    if (operandResult.getClass() == Integer.class) {
-                        doubleOperandResult = (int) operandResult;
-                        return -doubleOperandResult;
-                    }
-                    return -(double) operandResult;
-                case LogicalNegation:
-                    return !(boolean) operandResult;
-                default:
-                    Logging.error(TAG, new Exception("Unexpected unary operator: " + ((DecoratedUnaryExpression) node).op));
-                    break;
-            }
+        int round = 10000; //rounding off factor
 
-        }
-
-        //Binary Expressions: 2+4
-        if (node instanceof DecoratedBinaryExpression) {
-            DecoratedBinaryExpression b = (DecoratedBinaryExpression) node;
-            Object left = evaluateExpression(b.left);
-            Object right = evaluateExpression(b.right);
-
-            int round = 10000; //rounding off factor
-
-            switch (b.op.kind) {
+        if (left != null && right != null) {
+            switch (node.op.kind) {
                 case Add:
                     if (left.getClass() == Integer.class && right.getClass() == Integer.class)
                         return (double) Math.round(((int) left + (int) right) * round) / round;
@@ -149,14 +159,12 @@ public class Evaluator {
                 case NotEquals:
                     return !left.equals(right);
                 default:
-                    Logging.error(TAG, new Exception("Unexpected binary operator: " + b.op));
-
+                    Logging.error(TAG, new Exception("Unexpected binary operator: " + node.op));
             }
         }
 
         Logging.error(TAG, new Exception("Unexpected node: " + node.kind));
         return 0;
     }
-
-
+    
 }
