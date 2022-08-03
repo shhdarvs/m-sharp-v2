@@ -65,13 +65,45 @@ public class Program {
                 System.out.println();
             }
 
-            if (!diagnostics.isEmpty()) {
-                System.out.print(ConsoleColours.TEXT_RED);
-                for (Diagnostic d : diagnostics.diagnostics)
-                    System.out.println(d);
-                System.out.print(ConsoleColours.TEXT_RESET);
-            } else
+            if (diagnostics.isEmpty()) {
                 System.out.println("Result: " + result.value);
+            } else {
+
+                var sourceText = syntaxTree.sourceText;
+
+                for (Diagnostic d : diagnostics.diagnostics) {
+                    var lineIndex = sourceText.getLineIndex(d.textSpan.start);
+                    var lineNumber = lineIndex + 1;
+                    var ch = d.textSpan.start - sourceText.lines.get(lineIndex).start + 1;
+
+                    System.out.println();
+
+                    System.out.print(ConsoleColours.TEXT_RED);
+                    System.out.printf("(%s, %s): ", lineNumber, ch);
+                    System.out.println(d); //print out diagnostics
+                    System.out.print(ConsoleColours.TEXT_RESET);
+
+                    var prefix = line.substring(0, d.textSpan.start);
+                    var error = line.substring(d.textSpan.start, d.textSpan.start + d.textSpan.length);
+                    var suffix = line.substring(d.textSpan.end);
+
+                    //Print prefix
+                    System.out.print("    ");
+                    System.out.print(prefix);
+
+                    //Print error in red
+                    System.out.print(ConsoleColours.TEXT_RED);
+                    System.out.print(error);
+                    System.out.print(ConsoleColours.TEXT_RESET);
+
+                    //Print suffix
+                    System.out.print(suffix);
+                }
+
+                System.out.println();
+
+
+            }
 
             System.out.println();
 

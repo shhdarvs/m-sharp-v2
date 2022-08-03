@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.example.msharp.Logging;
-import com.prod.msharp.analysis.TextSpan;
+import com.prod.msharp.analysis.text.TextSpan;
 
 import java.io.IOException;
 import java.io.StringWriter;

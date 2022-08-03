@@ -80,9 +80,9 @@ public class SyntaxHelper {
             case ArrowToken:
                 return "<-";
             case AndToken:
-                return "&";
+                return "&&";
             case OrToken:
-                return "|";
+                return "||";
             case DoubleEqualsToken:
                 return "==";
             case NotEqualsToken:

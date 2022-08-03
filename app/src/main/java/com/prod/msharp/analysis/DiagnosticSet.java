@@ -5,6 +5,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.prod.msharp.analysis.syntax.TokenKind;
+import com.prod.msharp.analysis.text.TextSpan;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

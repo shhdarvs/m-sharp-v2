@@ -1,4 +1,4 @@
-package com.prod.msharp.analysis;
+package com.prod.msharp.analysis.text;
 
 /**
  * This class represents the span of some text.

@@ -3,10 +3,7 @@ package com.prod.msharp.analysis.syntax;
 
 import androidx.annotation.NonNull;
 
-import com.prod.msharp.analysis.TextSpan;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.prod.msharp.analysis.text.TextSpan;
 
 /**
  * This class represents a Token in the source program. The different kinds of token are listed as enums in {@link TokenKind}. Each token has a position in the source program, and string value, an object value, and a {@link TextSpan} object which represents the span of its text.

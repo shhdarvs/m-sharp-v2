@@ -5,6 +5,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.prod.msharp.analysis.DiagnosticSet;
+import com.prod.msharp.analysis.text.SourceText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Parser {
     public static final String TAG = "NewParser";
 
-    private String text;
+    private SourceText text;
     private final Token[] tokens;
     public int pos;
 
@@ -29,9 +30,7 @@ public class Parser {
      *
      * @param text source program to be parsed
      */
-    public Parser(String text) {
-        this.text = text;
-
+    public Parser(SourceText text) {
         List<Token> tokens = new ArrayList<>();
         Lexer lexer = new Lexer(text);
         Token token;
@@ -44,6 +43,7 @@ public class Parser {
 
         } while (token.kind != TokenKind.EOFToken);
 
+        this.text = text;
         this.tokens = tokens.toArray(new Token[0]);
         diagnostics.addAll(lexer.diagnostics);
     }
@@ -100,7 +100,7 @@ public class Parser {
     public SyntaxTree parse() {
         Expression exp = parseExpression(); // 0 is default for parent precedence
         Token EOFToken = matchToken(TokenKind.EOFToken);
-        return new SyntaxTree(exp, EOFToken, diagnostics);
+        return new SyntaxTree(text, exp, EOFToken, diagnostics);
     }
 
     private Expression parseExpression() {

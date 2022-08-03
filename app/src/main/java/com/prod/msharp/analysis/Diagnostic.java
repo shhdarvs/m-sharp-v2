@@ -2,8 +2,7 @@ package com.prod.msharp.analysis;
 
 import androidx.annotation.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.prod.msharp.analysis.text.TextSpan;
 
 public class Diagnostic {
     public TextSpan textSpan;

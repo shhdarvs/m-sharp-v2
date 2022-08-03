@@ -1,7 +1,8 @@
 package com.prod.msharp.analysis.syntax;
 
 import com.prod.msharp.analysis.DiagnosticSet;
-import com.prod.msharp.analysis.TextSpan;
+import com.prod.msharp.analysis.text.SourceText;
+import com.prod.msharp.analysis.text.TextSpan;
 
 /**
  * This class scans a source program and recognizes tokens in the source program (Lexical Analysis).
@@ -9,7 +10,7 @@ import com.prod.msharp.analysis.TextSpan;
 public class Lexer {
     public static final String TAG = "Lexer";
 
-    private String text;
+    private SourceText text;
     private int length;
     private int pos;
     private char current;
@@ -20,7 +21,7 @@ public class Lexer {
 
     public DiagnosticSet diagnostics = new DiagnosticSet();
 
-    public Lexer(String text) {
+    public Lexer(SourceText text) {
         this.text = text;
         this.pos = -1;
         this.length = text.length();
@@ -31,7 +32,6 @@ public class Lexer {
 
     /**
      * This method returns the current integer position of the next character from the input string. If the current character is the last character, current is set to the empty character (EOF)
-     *
      */
     private void next() {
         pos++;
@@ -168,7 +168,7 @@ public class Lexer {
         var text = SyntaxHelper.getText(kind);
 
         if (text == null)
-            text = this.text.substring(start, start + length);
+            text = this.text.toString(start, length);
 
         return new Token(kind, start, text, value);
 
@@ -176,7 +176,6 @@ public class Lexer {
 
     /**
      * Since the language makes use of both integer and double types, this method either makes an integer/double token
-     *
      */
     private void readNumber() {
         StringBuilder num = new StringBuilder();
@@ -196,7 +195,7 @@ public class Lexer {
         }
 
         int length = pos - start;
-        String text = this.text.substring(start, start + length);
+        String text = this.text.toString(start, start + length);
 
         if (dots == 0)
             readInteger(text);
@@ -241,7 +240,7 @@ public class Lexer {
             next();
 
         int length = pos - start;
-        String text = this.text.substring(start, start + length);
+        String text = this.text.toString(start, length);
         kind = SyntaxHelper.getKeyword(text);
     }
 
