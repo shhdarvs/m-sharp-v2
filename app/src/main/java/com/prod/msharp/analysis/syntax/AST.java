@@ -1,6 +1,7 @@
 package com.prod.msharp.analysis.syntax;
 
 import com.example.msharp.Logging;
+import com.prod.msharp.analysis.TextSpan;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -12,6 +13,14 @@ public abstract class AST {
     public abstract TokenKind kind();
 
     //public abstract List<AST> getChildren();
+
+    public TextSpan getSpan() {
+        List<AST> children = getChildren();
+
+        return TextSpan.createFromBounds(
+                children.get(0).getSpan().start,
+                children.get(children.size() - 1).getSpan().end);
+    }
 
     public List<AST> getChildren() {
         List<AST> childrenList = new ArrayList<>();

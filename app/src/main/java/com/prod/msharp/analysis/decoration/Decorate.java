@@ -93,7 +93,7 @@ public class Decorate {
         if (value != null)
             return new DecoratedVariableExpression(value);
 
-        diagnostics.reportUndefinedVariable(expression.identifierToken.textSpan, name);
+        diagnostics.reportUndefinedVariable(expression.identifierToken.getSpan(), name);
         return new DecoratedLiteralExpression(0);
     }
 
@@ -133,7 +133,7 @@ public class Decorate {
         DecoratedUnaryOperator decoratedOperator = DecoratedUnaryOperator.decorate(expression.operator.kind, decoratedOperand.type.get(0));
 
         if (decoratedOperator == null) {
-            diagnostics.reportUndefinedUnaryOperator(expression.operator.textSpan, expression.operator.text, decoratedOperand.type.get(0));
+            diagnostics.reportUndefinedUnaryOperator(expression.operator.getSpan(), expression.operator.text, decoratedOperand.type.get(0));
             return decoratedOperand;
         }
         return new DecoratedUnaryExpression(decoratedOperator, decoratedOperand);
@@ -153,7 +153,7 @@ public class Decorate {
         DecoratedBinaryOperator decoratedOperator = DecoratedBinaryOperator.decorate(expression.operator.kind, decoratedLeft.type.get(0), decoratedRight.type.get(0));
 
         if (decoratedOperator == null) {
-            diagnostics.reportUndefinedBinaryOperator(expression.operator.textSpan, expression.operator.text, decoratedLeft.type.get(0), decoratedRight.type.get(0));
+            diagnostics.reportUndefinedBinaryOperator(expression.operator.getSpan(), expression.operator.text, decoratedLeft.type.get(0), decoratedRight.type.get(0));
             return decoratedLeft;
         }
         return new DecoratedBinaryExpression(decoratedLeft, decoratedOperator, decoratedRight);

@@ -16,7 +16,7 @@ public class Token extends AST {
     public int pos;
     public final String text;
     public Object value;
-    public TextSpan textSpan;
+    private TextSpan textSpan;
 
     public Token(TokenKind kind, int pos, String text, Object value) {
         this.kind = kind;
@@ -24,6 +24,11 @@ public class Token extends AST {
         this.text = text;
         this.value = value;
         this.textSpan = new TextSpan(pos, text.length());
+    }
+
+    @Override
+    public TextSpan getSpan() {
+        return textSpan;
     }
 
     @NonNull

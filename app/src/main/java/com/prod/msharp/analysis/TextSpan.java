@@ -13,4 +13,8 @@ public class TextSpan {
         this.length = length;
         end = this.start + this.length;
     }
+
+    public static TextSpan createFromBounds(int start, int end) {
+        return new TextSpan(start, end - start);
+    }
 }

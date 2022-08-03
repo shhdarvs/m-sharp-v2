@@ -88,7 +88,7 @@ public class Parser {
         if (current.kind == kind)
             return nextToken();
 
-        diagnostics.reportUnexpectedToken(current.textSpan, current.kind, kind);
+        diagnostics.reportUnexpectedToken(current.getSpan(), current.kind, kind);
         return new Token(kind, current.pos, current.text, null);
     }
 
