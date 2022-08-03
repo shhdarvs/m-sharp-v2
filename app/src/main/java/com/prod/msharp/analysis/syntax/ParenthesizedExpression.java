@@ -19,8 +19,8 @@ public class ParenthesizedExpression extends Expression {
         return TokenKind.ParenthesizedExpression;
     }
 
-    @Override
-    public List<AST> getChildren() {
-        return Arrays.asList(openParenthesis, expression, closedParenthesis);
-    }
+//    @Override
+//    public List<AST> getChildren() {
+//        return Arrays.asList(openParenthesis, expression, closedParenthesis);
+//    }
 }

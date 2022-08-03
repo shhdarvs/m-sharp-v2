@@ -37,8 +37,4 @@ public class Token extends AST {
         return kind;
     }
 
-    @Override
-    public List<AST> getChildren() {
-        return new ArrayList<>();
-    }
 }

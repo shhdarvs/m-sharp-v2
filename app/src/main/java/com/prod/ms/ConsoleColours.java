@@ -1,4 +1,4 @@
-package com.prod.msharp.analysis.syntax;
+package com.prod.ms;
 
 public class ConsoleColours {
     public static final String TEXT_RESET = "\u001B[0m";

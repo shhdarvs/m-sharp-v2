@@ -15,8 +15,8 @@ public class NameExpression extends Expression {
         return TokenKind.NameExpression;
     }
 
-    @Override
-    public List<AST> getChildren() {
-        return Collections.singletonList(identifierToken);
-    }
+//    @Override
+//    public List<AST> getChildren() {
+//        return Collections.singletonList(identifierToken);
+//    }
 }

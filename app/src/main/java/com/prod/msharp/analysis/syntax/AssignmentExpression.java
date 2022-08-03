@@ -20,8 +20,8 @@ public class AssignmentExpression extends Expression {
         return TokenKind.AssignmentExpression;
     }
 
-    @Override
-    public List<AST> getChildren() {
-        return Arrays.asList(identifierToken, arrowToken, expression);
-    }
+//    @Override
+//    public List<AST> getChildren() {
+//        return Arrays.asList(identifierToken, arrowToken, expression);
+//    }
 }

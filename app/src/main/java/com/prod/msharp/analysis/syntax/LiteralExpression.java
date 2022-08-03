@@ -22,8 +22,8 @@ public class LiteralExpression extends Expression {
         return TokenKind.Literal;
     }
 
-    @Override
-    public List<AST> getChildren() {
-        return Collections.singletonList(literal);
-    }
+//    @Override
+//    public List<AST> getChildren() {
+//        return Collections.singletonList(literal);
+//    }
 }

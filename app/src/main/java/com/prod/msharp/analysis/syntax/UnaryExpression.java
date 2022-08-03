@@ -19,8 +19,8 @@ public class UnaryExpression extends Expression {
         return TokenKind.UnaryExpression;
     }
 
-    @Override
-    public List<AST> getChildren() {
-        return Arrays.asList(operator, operand);
-    }
+//    @Override
+//    public List<AST> getChildren() {
+//        return Arrays.asList(operator, operand);
+//    }
 }

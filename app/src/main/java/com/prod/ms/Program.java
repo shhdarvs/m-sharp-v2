@@ -9,7 +9,6 @@ import com.prod.msharp.analysis.Diagnostic;
 import com.prod.msharp.analysis.DiagnosticSet;
 import com.prod.msharp.analysis.VariableSymbol;
 import com.prod.msharp.analysis.syntax.AST;
-import com.prod.msharp.analysis.syntax.ConsoleColours;
 import com.prod.msharp.analysis.syntax.SyntaxTree;
 import com.prod.msharp.analysis.syntax.Token;
 

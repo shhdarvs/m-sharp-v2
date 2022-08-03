@@ -21,8 +21,8 @@ public class BinaryExpression extends Expression {
         return TokenKind.BinaryExpression;
     }
 
-    @Override
-    public List<AST> getChildren() {
-        return Arrays.asList(left, operator, right);
-    }
+//    @Override
+//    public List<AST> getChildren() {
+//        return Arrays.asList(left, operator, right);
+//    }
 }
