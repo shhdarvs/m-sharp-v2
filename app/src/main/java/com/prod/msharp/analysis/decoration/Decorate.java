@@ -15,9 +15,6 @@ import com.prod.msharp.analysis.syntax.NameExpression;
 import com.prod.msharp.analysis.syntax.ParenthesizedExpression;
 import com.prod.msharp.analysis.syntax.UnaryExpression;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,7 +37,7 @@ public class Decorate {
     @RequiresApi(api = Build.VERSION_CODES.P)
     public DecoratedExpression decorateExpression(Expression expression) {
         switch (expression.kind()) {
-            case Literal:
+            case LiteralExpression:
                 return decorateLiteralExpression((LiteralExpression) expression);
             case NameExpression:
                 return decorateNameExpression(((NameExpression) expression));

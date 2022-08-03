@@ -1,8 +1,16 @@
 package com.prod.msharp.analysis.syntax;
 
+import android.os.Build;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+
 import com.example.msharp.Logging;
 import com.prod.msharp.analysis.TextSpan;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,5 +45,67 @@ public abstract class AST {
             }
         }
         return childrenList;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void write(Writer writer) {
+        prettyPrint(writer, this, "", true);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void prettyPrint(Writer writer, AST node, String indent, boolean isLast) {
+        // └──
+        // ├──
+        // │
+
+        String marker = isLast ? "└──" : "├──";
+
+        try {
+            writer.write(indent);
+            writer.write(marker);
+            writer.write(node.kind().name());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (node instanceof Token) {
+            Token t = (Token) node;
+
+            if (t.value != null) {
+                try {
+                    writer.write(" ");
+                    writer.write(String.valueOf(t.value));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        try {
+            writer.write(System.lineSeparator());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        indent += isLast ? "    " : "│   ";
+
+        AST lastChild = null;
+
+        if (node.getChildren().size() > 0)
+            lastChild = node.getChildren().get(node.getChildren().size() - 1);
+
+        for (AST child : node.getChildren())
+            prettyPrint(writer, child, indent, child == lastChild);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @NonNull
+    @Override
+    public String toString() {
+        var writer = new StringWriter();
+
+        write(writer);
+        return writer.toString();
     }
 }

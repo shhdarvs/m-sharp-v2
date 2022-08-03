@@ -29,7 +29,7 @@ public enum TokenKind {
     FalseKeyword,
 
     //Expressions,
-    Literal,
+    LiteralExpression,
     NameExpression,
     AssignmentExpression,
     BinaryExpression,

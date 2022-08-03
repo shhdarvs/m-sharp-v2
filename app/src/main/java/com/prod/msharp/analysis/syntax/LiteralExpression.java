@@ -1,8 +1,5 @@
 package com.prod.msharp.analysis.syntax;
 
-import java.util.Collections;
-import java.util.List;
-
 public class LiteralExpression extends Expression {
 
     public Token literal;
@@ -19,7 +16,7 @@ public class LiteralExpression extends Expression {
 
     @Override
     public TokenKind kind() {
-        return TokenKind.Literal;
+        return TokenKind.LiteralExpression;
     }
 
 //    @Override

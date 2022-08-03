@@ -12,8 +12,12 @@ import com.prod.msharp.analysis.syntax.AST;
 import com.prod.msharp.analysis.syntax.SyntaxTree;
 import com.prod.msharp.analysis.syntax.Token;
 
+import java.io.Console;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Program {
@@ -75,18 +79,13 @@ public class Program {
 
     }
 
-    /**
-     * This method prints the source program as a abstract syntax tree
-     *
-     * @param node   the root node of the tree
-     * @param indent the amount of indentation to apply at the current point in time
-     */
-    static void prettyPrint(AST node, String indent, boolean isLast) {
+    private static void prettyPrint(AST node, String indent, boolean isLast) {
         // └──
         // ├──
         // │
 
         String marker = isLast ? "└──" : "├──";
+
 
         System.out.print(indent);
         System.out.print(marker);
@@ -98,11 +97,13 @@ public class Program {
             if (t.value != null) {
                 System.out.print(" ");
                 System.out.print(t.value);
+
             }
 
         }
 
         System.out.println();
+
 
         indent += isLast ? "    " : "│   ";
 
@@ -113,7 +114,7 @@ public class Program {
 
         for (AST child : node.getChildren())
             prettyPrint(child, indent, child == lastChild);
-
     }
+
 }
 
