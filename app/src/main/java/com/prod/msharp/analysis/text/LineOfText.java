@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 public class LineOfText {
     public SourceText text;
     public int start;
-    int end;
+    public int end;
     int length;
     int lengthWithLineBreak;
     public TextSpan span;

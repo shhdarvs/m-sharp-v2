@@ -164,7 +164,12 @@ public class Lexer {
 
         }
 
+
+        if (kind == TokenKind.ERROR)
+            pos++;
+
         var length = pos - start;
+
         var text = SyntaxHelper.getText(kind);
 
         if (text == null)
@@ -195,7 +200,7 @@ public class Lexer {
         }
 
         int length = pos - start;
-        String text = this.text.toString(start, start + length);
+        String text = this.text.toString(start, length);
 
         if (dots == 0)
             readInteger(text);
